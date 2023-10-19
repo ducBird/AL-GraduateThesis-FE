@@ -1,0 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+.header__navpage {
+  position: relative;
+}
+.header__navpage::before {
+  position: absolute;
+  top: 100%;
+  content: "";
+  height: 2px;
+  width: 0%;
+  background-color: transparent;
+  transition: all linear 0.3s;
+}
+.header__menu:hover .header__navpage::before {
+  width: 100%;
+  background-color: #2d7f58;
+}
+.hr-or {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0 10px;
+  background: white;
+}
+.border-register {
+  width: 1px;
+  height: 10px;
+  background-color: black;
+}
