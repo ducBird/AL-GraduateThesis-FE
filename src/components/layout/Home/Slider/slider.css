@@ -1,0 +1,12 @@
+.slick-slider {
+  margin: 0 50px !important;
+  border: none !important;
+}
+.slick-slider :focus {
+  outline: none; /* Loại bỏ viền đen khi nhấp vào */
+}
+@media (min-width: 1024px) {
+  .silder {
+    display: flex !important;
+  }
+}

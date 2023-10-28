@@ -1,0 +1,10 @@
+.sitebar-content .categories-sitebar ul li.current-cat > div > a {
+  color: #333;
+  font-weight: 600;
+}
+
+.sitebar-content .categories-sitebar li.current-cat > div > .count {
+  color: #fff;
+  background-color: #2d7f58;
+  border-color: #2d7f58;
+}
