@@ -4,21 +4,19 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { IProduct } from "../../../../interfaces/IProducts";
 import numeral from "numeral";
-import PopupView from "../Popup/PopupView";
-import PopupVariantOption from "../Popup/PopupVariantOption";
 import { AiOutlineHeart } from "react-icons/ai";
 import {
   WishlistItem,
   useProductWishlist,
 } from "../../../../hooks/useProductWishlist";
+import PopupView from "../Popup/PopupView";
+import PopupVariantOption from "../Popup/PopupVariantOption";
 interface IProps {
   product: IProduct;
 }
 function Product(props: IProps) {
   const { product } = props;
-  const { addWishlist, removeWishlist } = useProductWishlist(
-    (state) => state
-  ) as any;
+  const { addWishlist, removeWishlist } = useProductWishlist((state) => state);
   // state chứa id product được chọn
   const [productId, setProductId] = useState<string | undefined>("");
   const [productItem, setProductItem] = useState<IProduct | undefined>();

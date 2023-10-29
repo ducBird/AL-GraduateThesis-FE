@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { PageMenuData } from "../../../../meta/NavPageMenu";
-import LoginCard from "../../../Auth/Login/LoginCard";
+// import LoginCard from "../../../Auth/Login/LoginCard";
 import { Link, useLocation } from "react-router-dom";
 
 interface INavPage {
@@ -51,17 +51,17 @@ export default function NavPage({
                 key={index}
                 className="relative flex flex-wrap w-full max-w-full uppercase"
               >
-                {/* <a
-                href="#"
-                className="relative flex flex-wrap flex-1 w-full px-[20px] py-[5px] items-center min-h-[50px] border border-b-black/10 text-[13px] font-semibold focus:ring-2 focus:text-primary_green focus:ring-primary_green transition-all duration-300"
-              >
-                {data.icon && (
-                  <span className="me-[6px]">
-                    {data.icon && <data.icon size={20} />}
-                  </span>
-                )}
-                <span>{data.value}</span>
-              </a> */}
+                <a
+                  href="#"
+                  className="relative flex flex-wrap flex-1 w-full px-[20px] py-[5px] items-center min-h-[50px] border border-b-black/10 text-[13px] font-semibold focus:ring-2 focus:text-primary_green focus:ring-primary_green transition-all duration-300"
+                >
+                  {data.icon && (
+                    <span className="me-[6px]">
+                      {data.icon && <data.icon size={20} />}
+                    </span>
+                  )}
+                  <span>{data.value}</span>
+                </a>
                 {index === lastItemIndex ? (
                   <Link
                     to={"/component/auth/register"}

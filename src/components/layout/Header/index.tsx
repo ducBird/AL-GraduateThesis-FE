@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { FiMenu } from "react-icons/fi";
 import { RiShoppingCartLine } from "react-icons/ri";
-import { RxPerson } from "react-icons/rx";
+// import { RxPerson } from "react-icons/rx";
 import { BiSearchAlt } from "react-icons/bi";
 import { AiOutlineHeart } from "react-icons/ai";
 import { IoIosGitCompare } from "react-icons/io";
 import Navbar from "./Navbar";
 import NavPage from "./Subnav/NavPage";
 import Cart from "../../../components/Cart";
-import LoginCart from "../../Auth/Login/LoginCard";
+// import LoginCart from "../../Auth/Login/LoginCard";
 import AquaticLogo from "../../../assets/ImageAquaticLand.png";
 import { useCarts } from "../../../hooks/useCart";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,7 @@ import { useProductWishlist } from "../../../hooks/useProductWishlist";
 import SearchPopup from "./Search/index";
 
 export default function Header() {
-  const [openLogin, setOpenLogin] = React.useState(false);
+  // const [openLogin, setOpenLogin] = React.useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [windowSize, setWindowSize] = useState({
@@ -26,8 +26,8 @@ export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
   const [showPopupSearch, setShowPopupSearch] = useState(false);
   // zustand
-  const { items } = useCarts((state) => state) as any;
-  const { wishlist_items } = useProductWishlist((state) => state) as any;
+  const { items } = useCarts((state) => state);
+  const { wishlist_items } = useProductWishlist((state) => state);
   const quantityCart = items.reduce((total, item) => {
     // cast biến item sang kiểu dữ liệu number
     const cartItem = item as { quantity: number };
@@ -42,9 +42,9 @@ export default function Header() {
   const handleCart = () => {
     setOpenCart(true);
   };
-  const handleLogin = () => {
-    setOpenLogin(true);
-  };
+  // const handleLogin = () => {
+  //   setOpenLogin(true);
+  // };
   const closePopup = () => {
     setShowPopupSearch(false);
   };
@@ -52,18 +52,18 @@ export default function Header() {
   // const userStorage = localStorage.getItem("user-storage") ?? "";
   // const parsedUser = userStorage ? JSON.parse(userStorage) : null;
   // const user = parsedUser && Object.keys(parsedUser.state.users).length !== 0;
-  const refresh_token = localStorage.getItem("refresh_token");
-  useEffect(() => {
-    const handleSize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-    window.addEventListener("resize", handleSize);
-    handleSize();
-    return () => window.removeEventListener("resize", handleSize);
-  }, []);
+  // const refresh_token = localStorage.getItem("refresh_token");
+  // useEffect(() => {
+  //   const handleSize = () => {
+  //     setWindowSize({
+  //       width: window.innerWidth,
+  //       height: window.innerHeight,
+  //     });
+  //   };
+  //   window.addEventListener("resize", handleSize);
+  //   handleSize();
+  //   return () => window.removeEventListener("resize", handleSize);
+  // }, []);
 
   useEffect(() => {
     if (windowSize.width < 500) {
@@ -132,7 +132,7 @@ export default function Header() {
                     <BiSearchAlt size={24} />
                   </span>
                 </a>
-                <a
+                {/* <a
                   onClick={() => {
                     if (refresh_token) {
                       navigate("/history-order-user");
@@ -146,7 +146,7 @@ export default function Header() {
                   <span className="relative flex item-center justify-center">
                     <RxPerson size={24} />
                   </span>
-                </a>
+                </a> */}
                 <a
                   onClick={() => {
                     navigate("/wishlist");
@@ -193,7 +193,7 @@ export default function Header() {
         closeNavbar={closeNavbar}
       />
       <Cart openCart={openCart} setOpenCart={setOpenCart} />
-      <LoginCart openLogin={openLogin} setOpenLogin={setOpenLogin} />
+      {/* <LoginCart openLogin={openLogin} setOpenLogin={setOpenLogin} /> */}
       <SearchPopup showPopup={showPopupSearch} closePopup={closePopup} />
     </main>
   );

@@ -82,7 +82,7 @@ function SideBar({
         const response = await axiosClient.get("/products");
         setProducts(response.data);
         if (formattedValue) {
-          const filteredProducts = response.data.filter((product) => {
+          const filteredProducts = response.data.filter((product: IProduct) => {
             return product.name
               .toLowerCase()
               .includes(formattedValue.toLowerCase());

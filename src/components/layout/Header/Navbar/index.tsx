@@ -72,7 +72,7 @@ const Navbar = (props: Props) => {
   useEffect(() => {
     axiosClient.get("/products").then((response) => {
       if (formattedValue) {
-        const filteredProducts = response.data.filter((product) => {
+        const filteredProducts = response.data.filter((product: IProduct) => {
           return product.name
             .toLowerCase()
             .includes(formattedValue.toLowerCase());

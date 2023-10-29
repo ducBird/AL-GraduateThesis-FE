@@ -17,13 +17,13 @@ function CategoriesHome(props: IProps) {
 
   return (
     <div className="mt-16">
-      {/* <p
+      <p
         className="md:text-2xl text-xl font-semibold capitalize text-headingColor 
             relative before:absolute before:rounded-lg before:content before:w-24 md:before:w-28
             before:h-1 before:-bottom-2 before:left-0 before:bg-gradient-to-tr from-primary_green to-green-700 mr-auto"
       >
         Danh mục
-      </p> */}
+      </p>
       <div className="w-full flex items-center justify-start lg:justify-center gap-8 py-6 overflow-x-scroll scrollbar-none lg:overflow-x-hidden">
         {categories &&
           categories.map((category, index) => {
