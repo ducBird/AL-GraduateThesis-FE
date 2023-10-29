@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { MdOutlineClose, MdProductionQuantityLimits } from "react-icons/md";
 import { BsFillCartXFill } from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
-// import { useCarts } from "../../hooks/useCart";
+import { useCarts } from "../../hooks/useCart";
 import numeral from "numeral";
 import "./index.css";
 import { IProduct } from "../../interfaces/IProducts";
@@ -20,9 +20,9 @@ const Cart = (props: Props) => {
     window.scrollTo(0, 0);
   };
   const [products, setProducts] = useState(true);
-  const { items, remove } = useCarts((state) => state) as any;
+  const { items, remove } = useCarts((state: any) => state);
 
-  const totalOrder = items.reduce((total, item) => {
+  const totalOrder = items.reduce((total: any, item: any) => {
     return total + item.product.total * item.quantity;
   }, 0);
 
@@ -62,7 +62,7 @@ const Cart = (props: Props) => {
               {items.length > 0 ? (
                 <ul className="h-full">
                   {items.length > 0 &&
-                    items.map((item, index) => {
+                    items.map((item: any, index: any) => {
                       const removeCart: IRemoveCartItem = {
                         product: item.product as IProduct,
                       };
@@ -179,14 +179,14 @@ const Cart = (props: Props) => {
             </div>
           </div>
         )}
-        {/* <div className="relative">
+        <div className="relative">
           <button
             className="fixed bottom-4 left-4 w-10 h-10 bg-primary_green/80 text-white rounded-full flex justify-center items-center shadow-lg"
             onClick={handleCloseCart}
           >
             <MdOutlineClose size={30} />
           </button>
-        </div> */}
+        </div>
       </div>
     </div>
   );
