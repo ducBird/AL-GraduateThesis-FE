@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { axiosClient } from "../../../libraries/axiosClient";
 import { useCarts } from "../../../hooks/useCart";
 import { useUser } from "../../../hooks/useUser";
-// import CheckOutCard from "./CheckOutCard";
+import CheckOutCard from "./CheckOutCard";
 import { IAccumulated } from "../../../interfaces/Accumulated";
 import numeral from "numeral";
 // interface typeCity {
@@ -728,7 +728,7 @@ const CheckOut = () => {
                 </div>
               </div>
             </div>
-            {/* <div className="md:col-span-4 md:mt-8">
+            <div className="md:col-span-4 md:mt-8">
               <div className="mt-4 bg-[#f7f7f7] p-3">
                 <CheckOutCard
                   items={items}
@@ -742,7 +742,7 @@ const CheckOut = () => {
                   onPointStatusChange={handlePointStatusChange} // Truyền hàm callback vào component con
                 />
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
       </form>
