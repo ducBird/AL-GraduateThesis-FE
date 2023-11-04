@@ -55,7 +55,9 @@ const CheckOut = () => {
     setPointStatus(newPointStatus); // Cập nhật giá trị pointStatus ở component cha
   };
   const totalOrder = items.reduce((total, item) => {
-    return total + item.product.total * item.quantity;
+    const priceDiscount =
+      (item.product?.variants[0]?.price * (100 - item.product?.discount)) / 100;
+    return total + priceDiscount * item.quantity;
   }, 0);
 
   const userString = localStorage.getItem("user-storage");
@@ -107,6 +109,7 @@ const CheckOut = () => {
       values.order_details = [];
       values.customer_id = user.state.users.user._id;
       values.payment_status = false;
+      values.status = "WAIT FOR CONFIRMATION";
       (values.total_money_order =
         pointStatus === true
           ? `${numeral(newTotalOrder).format("0,0").replace(/,/g, ".")}`

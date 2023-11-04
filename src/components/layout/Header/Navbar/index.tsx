@@ -39,7 +39,7 @@ const Navbar = (props: Props) => {
     if (searchValue.trim() !== "") {
       navigate(`/search-products?name=${formattedValue}`);
     } else {
-      alert("Please enter your information in the search box ");
+      alert("Vui lòng nhập vào ô tìm kiếm!");
     }
   };
   const formattedValue = searchValue.replace(/\s+/g, "+");
@@ -142,25 +142,19 @@ const Navbar = (props: Props) => {
 
               {searchProducts.length > 0 &&
                 searchProducts.map((item) => {
-                  // Lấy ra danh sách các variant từ sản phẩm
-                  const variants = item?.variants || [];
-                  // Khởi tạo giá mới bằng giá ban đầu
-                  let newPrice = numeral(item?.price).value();
-                  const discount = numeral(item?.discount).value();
-                  // Lặp qua danh sách các variant
-                  for (const variant of variants) {
-                    // Kiểm tra xem variant có options không
-                    if (variant.options && variant.options.length > 0) {
-                      // Lấy giá của option đầu tiên trong variant
-                      const optionPrice = numeral(
-                        variant.options[0].add_valuation
-                      ).value();
+                  let minPrice = 0;
+                  let maxPrice = 0;
 
-                      // Cộng giá của option đầu tiên vào giá mới
-                      newPrice += optionPrice;
+                  if (item.variants.length > 0) {
+                    const prices = item.variants
+                      .map((variant) => numeral(variant.price).value())
+                      .filter((price) => price !== null) as number[];
+
+                    if (prices.length > 0) {
+                      minPrice = Math.min(...prices);
+                      maxPrice = Math.max(...prices);
                     }
                   }
-                  const totalDiscount = (newPrice * (100 - discount)) / 100;
                   return (
                     <Link
                       to={`/shop/product/${item?._id}`}
@@ -177,29 +171,21 @@ const Navbar = (props: Props) => {
                         />
                         <div className="ml-3">
                           <p className="font-bold text-sm">{item?.name} </p>
-                          <div className="price text-sm text-primary_green mb-3 mt-3">
-                            <span
-                              className={
-                                item?.discount
-                                  ? "line-through text-black"
-                                  : "list-none  font-bold"
-                              }
-                            >
-                              {numeral(newPrice)
-                                .format("0,0")
-                                .replace(/,/g, ".")}{" "}
-                              vnđ
-                            </span>
-                            <span
-                              className={
-                                item?.discount ? "pl-2 font-bold" : "hidden"
-                              }
-                            >
-                              {numeral(totalDiscount)
-                                .format("0,0")
-                                .replace(/,/g, ".")}{" "}
-                              vnđ
-                            </span>
+                          <div className="price text-primary_green mt-6 font-bold">
+                            {item.variants.length > 0 ? (
+                              <span>
+                                {numeral(minPrice)
+                                  .format("0,0")
+                                  .replace(/,/g, ".")}{" "}
+                                -{" "}
+                                {numeral(maxPrice)
+                                  .format("0,0")
+                                  .replace(/,/g, ".")}{" "}
+                                vnđ
+                              </span>
+                            ) : (
+                              <span>{item.price}</span>
+                            )}
                           </div>
                         </div>
                       </div>

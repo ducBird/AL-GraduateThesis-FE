@@ -1,3 +1,4 @@
+import { IAttributes } from "./IAttributes";
 import { ICategory } from "./ICategory";
 import { IVariants } from "./IVariants";
 
@@ -9,8 +10,9 @@ export interface IProduct {
   price: number;
   total: number;
   product_image: string;
-  discount: number;
+  discount: number | undefined;
   sort_order: number;
   category: ICategory;
   variants: IVariants[];
+  attributes: IAttributes[];
 }

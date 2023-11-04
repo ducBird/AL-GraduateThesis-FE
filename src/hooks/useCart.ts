@@ -20,28 +20,25 @@ export const useCarts = create(
         try {
           const items = get().items;
           const found = items.find((itemCart: CartItem) => {
-            return (
-              // every dùng để kiểm tra tất cả các phần tử trong mảng có thõa mãn điều kiện so sánh không
-              // some dùng để kiểm tra xem có ít nhất một phần tử trong mảng thõa mãn điều kiện so sánh
+            if (
               itemCart.product?._id === product?._id &&
-              itemCart.product.variants.every((variant) =>
-                product.variants.some(
-                  (newVariant) =>
-                    newVariant._id === variant._id &&
-                    newVariant?.options?.every((newOption) =>
-                      variant?.options?.some(
-                        (option) => option._id === newOption._id
-                      )
-                    )
-                )
-              )
-            );
+              itemCart.product.variants.length === product.variants.length
+            ) {
+              return itemCart.product.variants.every((cartVariant) => {
+                return product.variants.some((newVariant) => {
+                  return newVariant.title === cartVariant.title;
+                });
+              });
+            }
+            return false;
           });
+
           if (found) {
             found.quantity += quantity;
           } else {
             items.push({ product, quantity });
           }
+          console.log("items", items);
 
           return set({ items: [...items] }, false, { type: "cart/addToCart" });
         } catch (error) {
@@ -52,24 +49,18 @@ export const useCarts = create(
       updateQuantity: ({ product, quantity }: CartItem) => {
         const items = get().items;
         const found = items.find((itemCart: CartItem) => {
-          return (
-            // every dùng để kiểm tra tất cả các phần tử trong mảng có thõa mãn điều kiện so sánh không
-            // some dùng để kiểm tra xem có ít nhất một phần tử trong mảng thõa mãn điều kiện so sánh
+          if (
             itemCart.product?._id === product?._id &&
-            itemCart.product.variants.every((variant) =>
-              product.variants.some(
-                (newVariant) =>
-                  newVariant._id === variant._id &&
-                  newVariant?.options?.every((newOption) =>
-                    variant?.options?.some(
-                      (option) => option._id === newOption._id
-                    )
-                  )
-              )
-            )
-          );
+            itemCart.product.variants.length === product.variants.length
+          ) {
+            return itemCart.product.variants.every((cartVariant) => {
+              return product.variants.some((newVariant) => {
+                return newVariant.title === cartVariant.title;
+              });
+            });
+          }
+          return false;
         });
-        // console.log(found);
         if (found) {
           found.quantity = quantity;
         }
@@ -83,21 +74,18 @@ export const useCarts = create(
 
         const newItems = items.filter((itemCart: CartItem) => {
           return (
-            // dùng toán tử !itemCart.product.variants.every để giữ lại đơn hàng nếu như có một variant hoặc option không khớp
-            itemCart.product?._id !== product?._id ||
-            !itemCart.product.variants.every((variant) =>
-              product.variants.some(
-                (newVariant) =>
-                  newVariant._id === variant._id &&
-                  newVariant.options?.every((newOption) =>
-                    variant.options?.some(
-                      (option) => option._id === newOption._id
-                    )
-                  )
-              )
-            )
+            itemCart.product &&
+            (itemCart.product._id !== product._id ||
+              !itemCart.product.variants.some((cartVariant) => {
+                return product.variants.some(
+                  (newVariant) =>
+                    newVariant.title === cartVariant.title &&
+                    newVariant._id === cartVariant._id
+                );
+              }))
           );
         });
+
         return set({ items: newItems }, false, { type: "cart/removeCart" });
       },
 

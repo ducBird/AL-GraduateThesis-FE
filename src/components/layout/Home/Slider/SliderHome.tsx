@@ -21,7 +21,7 @@ function SliderHome(props: IProductProps) {
   };
 
   const findProductsSortOrder = products.filter((product) => {
-    return product.sort_order === 1;
+    return product.sort_order === 10;
   });
   return (
     <div>
@@ -29,7 +29,7 @@ function SliderHome(props: IProductProps) {
         {findProductsSortOrder.map((value, index) => {
           return (
             <div
-              className="silder cursor-pointer px-10 lg:h-[500px]"
+              className="silder cursor-pointer px-10 lg:h-[500px] mb-10"
               key={index}
             >
               <div className="lg:flex-1 lg:h-full slider__product_image ">
