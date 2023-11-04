@@ -19,7 +19,9 @@ const ShoppingCart = () => {
   );
 
   const totalOrder = items.reduce((total, item) => {
-    return total + item.product.total * item.quantity;
+    const priceDiscount =
+      (item.product?.variants[0]?.price * (100 - item.product?.discount)) / 100;
+    return total + priceDiscount * item.quantity;
   }, 0);
   const [quantityChange, setQuantityChange] = useState<boolean>(false);
   const [changedProductIds, setChangedProductIds] = useState<string[]>([]);
@@ -93,9 +95,10 @@ const ShoppingCart = () => {
                       product: item.product as IProduct,
                     };
                     const product = item.product;
-                    const total = numeral(item.product?.total)
-                      .format("0,0")
-                      .replace(/,/g, ".");
+                    const priceDiscount =
+                      (item.product?.variants[0]?.price *
+                        (100 - item.product?.discount)) /
+                      100;
                     return (
                       <li className="border-b" key={index}>
                         <div className="flex py-3 px-2">
@@ -111,7 +114,7 @@ const ShoppingCart = () => {
                           <div className="flex-1 md:max-w-[220px] leading-[33px] pl-3">
                             <Link to={`/shop/product/${product._id}`}>
                               <p className="font-medium leading-[20px]">
-                                {product.name}
+                                {product.name} - {product?.variants[0]?.title}
                               </p>
                             </Link>
                             <div className="leading-[15px]">
@@ -126,7 +129,12 @@ const ShoppingCart = () => {
                               <span className="text-[12px] font-semibold">
                                 Giá
                               </span>
-                              <span>{total} vnđ</span>
+                              <span>
+                                {numeral(priceDiscount)
+                                  .format("0,0")
+                                  .replace(/,/g, ".")}{" "}
+                                vnđ
+                              </span>
                             </div>
                             <div className="flex justify-between border-dashed border-b-[1px] items-center py-2">
                               <span className="text-[12px] font-semibold">
@@ -154,7 +162,7 @@ const ShoppingCart = () => {
                             <div className="flex justify-between text-primary_green font-semibold">
                               <span className="">Tổng phụ</span>
                               <span className="">
-                                {numeral(item.quantity * item.product?.total)
+                                {numeral(item.quantity * priceDiscount)
                                   .format("0,0")
                                   .replace(/,/g, ".")}{" "}
                                 vnđ
@@ -192,9 +200,10 @@ const ShoppingCart = () => {
                         const removeCart: IRemoveCartItem = {
                           product: item.product as IProduct,
                         };
-                        const total = numeral(item.product?.total)
-                          .format("0,0")
-                          .replace(/,/g, ".");
+                        const priceDiscount =
+                          (item.product?.variants[0]?.price *
+                            (100 - item.product?.discount)) /
+                          100;
                         return (
                           <tr className="border-t-2" key={index}>
                             <td className="py-[15px] ">
@@ -219,7 +228,8 @@ const ShoppingCart = () => {
                             <td className="py-[15px] w-[200px] pl-4">
                               <div className="w-[85%] md:text-[14px]">
                                 <h2 className="font-medium leading-[20px]">
-                                  {item.product.name}
+                                  {item.product.name} -{" "}
+                                  {item?.product?.variants[0]?.title}
                                 </h2>
                                 <div className="leading-[15px]">
                                   <p className="text-primary_green text-[13px] ">
@@ -233,7 +243,12 @@ const ShoppingCart = () => {
                             </td>
                             <td className="py-[15px] ">
                               <div className="flex justify-between items-center ">
-                                <span>{total} vnđ</span>
+                                <span>
+                                  {numeral(priceDiscount)
+                                    .format("0,0")
+                                    .replace(/,/g, ".")}{" "}
+                                  vnđ
+                                </span>
                               </div>
                             </td>
                             <td className="py-[15px] ">
@@ -261,8 +276,8 @@ const ShoppingCart = () => {
                             <td className="py-[15px] ">
                               <div className="flex justify-between ">
                                 <span className="text-primary_green font-semibold">
-                                  {numeral(item.quantity * item.product?.total)
-                                    .format("0,0")
+                                  {numeral(item.quantity * priceDiscount)
+                                    .format("")
                                     .replace(/,/g, ".")}{" "}
                                   vnđ
                                 </span>

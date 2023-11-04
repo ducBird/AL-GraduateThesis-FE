@@ -7,7 +7,7 @@ interface IProductsProps {
 function HotProductsHome(props: IProductsProps) {
   const { products } = props;
   const findProductsDiscount = products.filter((product) => {
-    return product.discount >= 10;
+    return product.sort_order === 10;
   });
   return (
     <div className="mt-16 w-full">

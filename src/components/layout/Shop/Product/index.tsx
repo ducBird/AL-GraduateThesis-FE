@@ -43,21 +43,15 @@ function Product(props: IProps) {
   // Lấy ra danh sách các variant từ sản phẩm
   const variants = productItem?.variants || [];
 
-  // Khởi tạo giá mới bằng giá ban đầu
-  let newPrice = numeral(productItem?.price).value();
-  const discount = numeral(productItem?.discount).value();
-  // Lặp qua danh sách các variant
-  for (const variant of variants) {
-    // Kiểm tra xem variant có options không
-    if (variant.options && variant.options.length > 0) {
-      // Lấy giá của option đầu tiên trong variant
-      const optionPrice = numeral(variant.options[0].add_valuation).value();
+  let minPrice = 0;
+  let maxPrice = 0;
 
-      // Cộng giá của option đầu tiên vào giá mới
-      newPrice += optionPrice;
-    }
+  if (variants.length > 0) {
+    const prices = variants.map((variant) => numeral(variant.price).value());
+
+    minPrice = Math.min(...prices);
+    maxPrice = Math.max(...prices);
   }
-  const totalDiscount = (newPrice * (100 - discount)) / 100;
 
   // wishlist
   const toggleWishlist = () => {
@@ -91,35 +85,21 @@ function Product(props: IProps) {
           <img
             src={productItem?.product_image}
             alt="image"
-            className="w-[190px] h-[190px] object-contain mx-auto my-7 "
+            className="w-[240px] h-[200px] object-contain mx-auto my-7 "
           />
           <div>
             <p className="h-[50px] font-bold px-1">{productItem?.name} </p>
-            <div className="min-h-[30px]">
-              {productItem?.variants?.map((item: any, index: number) => {
-                return (
-                  <span key={item._id}>
-                    {item.options[0]?.value}{" "}
-                    {index !== productItem.variants.length - 1 ? "-" : ""}{" "}
-                  </span>
-                );
-              })}
-            </div>
           </div>
-          <div className="price text-lg text-primary_green mb-3 mt-3">
-            <span
-              className={
-                productItem?.discount
-                  ? "line-through text-black"
-                  : "list-none  font-bold"
-              }
-            >
-              {numeral(newPrice).format("0,0").replace(/,/g, ".")}
-            </span>
-            <span
-              className={productItem?.discount ? "pl-2 font-bold" : "hidden"}
-            >
-              {numeral(totalDiscount).format("0,0").replace(/,/g, ".")}
+          <div className="price text-lg text-primary_green mb-3 mt-3 font-bold">
+            <span>
+              {variants.length > 0 ? (
+                <span>
+                  {numeral(minPrice).format("0,0").replace(/,/g, ".")} -{" "}
+                  {numeral(maxPrice).format("0,0").replace(/,/g, ".")} vnđ
+                </span>
+              ) : (
+                ""
+              )}
             </span>
           </div>
 

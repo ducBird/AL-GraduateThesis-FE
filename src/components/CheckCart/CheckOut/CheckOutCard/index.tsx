@@ -49,6 +49,10 @@ function CheckOutCard({
           <tbody>
             {items.length > 0 ? (
               items.map((item: any, index) => {
+                const priceDiscount =
+                  (item.product?.variants[0]?.price *
+                    (100 - item.product?.discount)) /
+                  100;
                 return (
                   <tr
                     className="flex justify-between p-3 border-t-2"
@@ -80,7 +84,7 @@ function CheckOutCard({
                     <td>
                       <span>
                         {" "}
-                        {numeral(item.quantity * item.product?.total)
+                        {numeral(item.quantity * priceDiscount)
                           .format("0,0")
                           .replace(/,/g, ".")}{" "}
                         vnđ
@@ -125,23 +129,27 @@ function CheckOutCard({
                 </div>
               </td>
             </tr>
-            <tr className="flex justify-between p-3  border-t-2">
-              <th>Dùng tiền tích lũy</th>
-              <td className="flex flex-col ">
-                <div className="flex justify-end gap-1">
-                  <span>-</span>
-                  <span>
-                    {numeral(points).format("0,0").replace(/,/g, ".")} vnđ
-                  </span>
-                  <input
-                    type="checkbox"
-                    name="name"
-                    onClick={handleCheckboxClick}
-                    checked={pointStatus}
-                  />
-                </div>
-              </td>
-            </tr>
+            {points >= 10000 ? (
+              <tr className="flex justify-between p-3 border-t-2">
+                <th>Dùng tiền tích lũy</th>
+                <td className="flex flex-col ">
+                  <div className="flex justify-end gap-1">
+                    <span>-</span>
+                    <span>
+                      {numeral(points).format("0,0").replace(/,/g, ".")} vnđ
+                    </span>
+                    <input
+                      type="checkbox"
+                      name="name"
+                      onClick={handleCheckboxClick}
+                      checked={pointStatus}
+                    />
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              ""
+            )}
             <tr className="flex justify-between p-3  border-t-2">
               <th>Tổng</th>
               <td className="text-primary_green font-bold">

@@ -5,6 +5,7 @@ import Product from "../Product";
 import { Link, useParams } from "react-router-dom";
 import { IProduct } from "../../../../interfaces/IProducts";
 import ProductVariantOption from "../ProductVariantOption";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 interface ICategories {
   _id: string;
   name: string;
@@ -107,13 +108,6 @@ function ProductDetail() {
           )}
         </div>
         <div className="lg:flex mt-3 lg:mt-10 ">
-          <div className="lg:flex-1 h-[400px] lg:h-[500px] w-full flex items-center justify-center">
-            <img
-              src={product?.product_image}
-              alt="image"
-              className="cursor-pointer w-full h-full object-contain"
-            />
-          </div>
           <div className="p-7 lg:flex-1 border border-gray-200 h-auto lg:ml-4">
             <div>
               <ProductVariantOption product={product} />
@@ -141,12 +135,23 @@ function ProductDetail() {
       <div className="border border-b-0 border-gray-200 my-12"></div>
       <div className="related-products my-7">
         <h4 className="text-xl font-semibold my-4">Sản phẩm liên quan</h4>
-        <div className="grid gap-x-2 gap-y-2 grid-cols-2 lg:grid-cols-5 text-center mt-5">
-          {filteredRelatedProducts &&
-            filteredRelatedProducts.map((item) => {
-              return <Product product={item} key={item?._id} />;
-            })}
-        </div>
+        {filteredRelatedProducts.length > 0 ? (
+          <div className="grid gap-x-2 gap-y-2 grid-cols-2 lg:grid-cols-5 text-center mt-5">
+            {filteredRelatedProducts &&
+              filteredRelatedProducts.map((item) => {
+                return <Product product={item} key={item?._id} />;
+              })}
+          </div>
+        ) : (
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-4">
+              <AiOutlineInfoCircle lg:size={200} size={130} />
+            </div>
+            <p className="text-primary_green font-bold text-lg">
+              Không có sản phẩm{" "}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

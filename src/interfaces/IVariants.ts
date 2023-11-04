@@ -1,8 +1,9 @@
-import { IVariantOptions } from "./IVariantOptions";
-
 export interface IVariants {
-  _id: string;
-  price_adjustment: number;
+  _id: object;
   title: string;
-  options: IVariantOptions[] | null;
+  price: number;
+  stock: number;
+  position: number;
+  variant_image: string;
+  product_id: object;
 }

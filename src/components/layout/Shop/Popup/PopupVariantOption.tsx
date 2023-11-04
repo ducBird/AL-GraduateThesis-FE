@@ -15,9 +15,9 @@ const customStyles = {
     right: "auto",
     bottom: "auto",
     transform: "translate(-50%, -50%)",
-    maxWidth: "850px",
+    maxWidth: "1000px",
     width: "100%",
-    height: "520px",
+    height: "600px",
     padding: "20px",
   },
 };

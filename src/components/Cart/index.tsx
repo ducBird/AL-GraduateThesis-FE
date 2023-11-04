@@ -22,8 +22,10 @@ const Cart = (props: Props) => {
   const [products, setProducts] = useState(true);
   const { items, remove } = useCarts((state: any) => state);
 
-  const totalOrder = items.reduce((total: any, item: any) => {
-    return total + item.product.total * item.quantity;
+  const totalOrder = items.reduce((total, item) => {
+    const priceDiscount =
+      (item.product?.variants[0]?.price * (100 - item.product?.discount)) / 100;
+    return total + priceDiscount * item.quantity;
   }, 0);
 
   return (
@@ -66,6 +68,10 @@ const Cart = (props: Props) => {
                       const removeCart: IRemoveCartItem = {
                         product: item.product as IProduct,
                       };
+                      const priceDiscount =
+                        (item.product?.variants[0]?.price *
+                          (100 - item.product?.discount)) /
+                        100;
                       return (
                         <li className="border-b" key={index}>
                           <div className="relative flex py-3 px-2 h-auto">
@@ -78,7 +84,8 @@ const Cart = (props: Props) => {
                             </div>
                             <div className="max-w-[180px] md:max-w-[220px] leading-[25px] ml-5">
                               <h2 className="font-medium leading-[20px]">
-                                {item.product.name}
+                                {item.product.name} -{" "}
+                                {item?.product?.variants[0]?.title}
                               </h2>
                               <p className="text-primary_green text-[13px]">
                                 only 4 left
@@ -88,9 +95,10 @@ const Cart = (props: Props) => {
                                 <AiOutlineClose size={10} />
 
                                 <span className="text-primary_green">
-                                  {numeral(item.product?.total)
+                                  {numeral(priceDiscount)
                                     .format("0,0")
-                                    .replace(/,/g, ".")}
+                                    .replace(/,/g, ".")}{" "}
+                                  vnđ
                                 </span>
                               </span>
                             </div>

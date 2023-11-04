@@ -10,9 +10,9 @@ interface IProps {
 }
 function CategoriesHome(props: IProps) {
   const { categories, products } = props;
-  const [filter, setFilter] = useState<string>("Dry Goods");
-  const findProductByCategoryName = products.filter(
-    (product) => product.category.name === filter
+  const [filter, setFilter] = useState<string>("");
+  const findProductByCategoryId = products.filter(
+    (product) => product?.category?._id?.toString() === filter
   );
 
   return (
@@ -27,34 +27,34 @@ function CategoriesHome(props: IProps) {
       <div className="w-full flex items-center justify-start lg:justify-center gap-8 py-6 overflow-x-scroll scrollbar-none lg:overflow-x-hidden">
         {categories &&
           categories.map((category, index) => {
-            const categoryName = category.name ? category.name : "";
+            const categoryId = category?._id?.toString() ?? "";
             return (
               <motion.div
                 whileTap={{ scale: 0.85 }}
                 key={index}
                 className={`group ${
-                  filter === category?.name ? "bg-primary_green" : "bg-green-50"
+                  filter === categoryId ? "bg-primary_green" : "bg-green-50"
                 } w-28 min-w-[94px] h-32 cursor-pointer rounded-lg drop-shadow-xl flex flex-col gap-3 items-center 
                   justify-center duration-100 transition-all ease-in-out hover:bg-primary_green`}
                 onClick={() => {
-                  setFilter(categoryName);
+                  setFilter(categoryId);
                 }}
               >
                 <div
                   className={`w-10 h-10 rounded-full ${
-                    filter === category?.name ? "bg-white" : "bg-primary_green"
+                    filter === categoryId ? "bg-white" : "bg-primary_green"
                   } group-hover:bg-white 
                   flex items-center justify-center`}
                 >
                   <IoFastFood
                     className={`${
-                      filter === category?.name ? "text-black" : "text-white"
+                      filter === categoryId ? "text-black" : "text-white"
                     } group-hover:text-black text-lg`}
                   />
                 </div>
                 <p
                   className={`md:text-sm text-xs ${
-                    filter === category?.name ? "text-white" : "text-black"
+                    filter === categoryId ? "text-white" : "text-black"
                   } group-hover:text-white`}
                 >
                   {category?.name}
@@ -64,12 +64,12 @@ function CategoriesHome(props: IProps) {
           })}
       </div>
       <div className="w-full lg:flex lg:items-center lg:justify-center gap-3 mt-5">
-        {findProductByCategoryName &&
-          findProductByCategoryName.map((item, index) => {
+        {findProductByCategoryId &&
+          findProductByCategoryId.map((item, index) => {
             return (
               <div
                 key={index}
-                className="w-[70%] lg:w-[290px] text-center border mb-5 justify-center rounded-md
+                className="w-[90%] lg:w-[290px] text-center border mb-5 justify-center rounded-md
                             shadow-md mx-auto lg:mx-0"
               >
                 <Product product={item} key={item?._id} />
