@@ -59,6 +59,13 @@ const PopupView: React.FC<IModalProps> = ({
         contentLabel="Example Modal"
       >
         <div className="lg:flex w-full h-full mt-6 lg:mt-0">
+          {/* <div className="flex-1 items-center justify-center">
+            <img
+              src={product?.product_image}
+              alt="image"
+              className="w-full h-full object-contain p-2"
+            />
+          </div> */}
           <div className="flex-1 font-semibold cursor-pointer text-sm mt-5">
             {/* <p className="p-2">{product?.name}</p> */}
             <ProductVariantOption product={product} />

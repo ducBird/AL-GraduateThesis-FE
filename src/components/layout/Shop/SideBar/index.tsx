@@ -4,13 +4,13 @@ import {
   MdKeyboardArrowDown,
   MdKeyboardArrowUp,
 } from "react-icons/md";
-import numeral from "numeral";
 import { axiosClient } from "../../../../libraries/axiosClient";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "./index.css";
 import { motion } from "framer-motion";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
+import numeral from "numeral";
 import { IProduct } from "../../../../interfaces/IProducts";
 interface ICategories {
   _id: string;
@@ -55,7 +55,7 @@ function SideBar({
   const { categoryId } = useParams();
   const { subCategoryId } = useParams();
 
-  const [sliderValue, setSliderValue] = useState([0, 1000000]); // Giá trị ban đầu của thanh trượt là từ 0 đến 100
+  const [sliderValue, setSliderValue] = useState([0, 1500000]); // Giá trị ban đầu của thanh trượt là từ 0 đến 100
   const formattedValue = searchValue.replace(/\s+/g, "+");
   useEffect(() => {
     setCategoryCurrent({ category_id: null, sub_category_id: null });
@@ -82,7 +82,7 @@ function SideBar({
         const response = await axiosClient.get("/products");
         setProducts(response.data);
         if (formattedValue) {
-          const filteredProducts = response.data.filter((product: IProduct) => {
+          const filteredProducts = response.data.filter((product) => {
             return product.name
               .toLowerCase()
               .includes(formattedValue.toLowerCase());
@@ -135,7 +135,7 @@ function SideBar({
       navigate(`/search-products?name=${formattedValue}`);
       setSearchProducts([]);
     } else {
-      alert("Please enter your information in the search box ");
+      alert("Vui lòng nhập thông tin vào ô tìm kiếm để có thể tìm kiếm");
     }
   };
 
@@ -200,18 +200,16 @@ function SideBar({
 
             {searchProducts.length > 0 ? (
               searchProducts.map((item) => {
-                let minPrice: number = 0;
-                let maxPrice: number = 0;
+                let minPrice = 0;
+                let maxPrice = 0;
 
                 if (item.variants.length > 0) {
-                  const prices = item.variants
-                    .map((variant) => numeral(variant.price).value())
-                    .filter((price) => price !== null) as number[];
+                  const prices = item.variants.map((variant) =>
+                    numeral(variant.price).value()
+                  );
 
-                  if (prices.length > 0) {
-                    minPrice = Math.min(...prices);
-                    maxPrice = Math.max(...prices);
-                  }
+                  minPrice = Math.min(...prices);
+                  maxPrice = Math.max(...prices);
                 }
                 return (
                   <Link
@@ -397,7 +395,7 @@ function SideBar({
         <div className="slider-container mb-5 px-3">
           <Slider
             min={0}
-            max={1000000}
+            max={1500000}
             value={sliderValue}
             onChange={handleSliderChange}
             range

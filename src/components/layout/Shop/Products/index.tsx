@@ -146,7 +146,7 @@ function Products({
         </div>
 
         <div className="">
-          <span className="text-sm lg:text-lg font-semibold">Show: </span>
+          <span className="text-sm lg:text-lg font-semibold">Hiển thị: </span>
           <span
             className={`text-sm lg:text-lg cursor-pointer ${
               displayedItemsPerPage === "8" ? "text-black font-semibold" : ""

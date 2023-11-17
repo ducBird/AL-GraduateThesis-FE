@@ -1,3 +1,5 @@
+import { ICustomerCart } from "./ICustomerCart";
+
 export interface ICustomer {
   _id?: object;
   first_name?: string;
@@ -13,4 +15,6 @@ export interface ICustomer {
   is_delete?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  points: number;
+  customer_cart: ICustomerCart[];
 }

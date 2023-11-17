@@ -68,57 +68,40 @@ export const useCarts = create(
           type: "cart/updateQuantity",
         });
       },
-
       remove: ({ product }: IRemoveCartItem) => {
         const items = get().items;
 
-        const newItems = items.filter((itemCart: CartItem) => {
-          return (
-            itemCart.product &&
-            (itemCart.product._id !== product._id ||
-              !itemCart.product.variants.some((cartVariant) => {
-                return product.variants.some(
-                  (newVariant) =>
-                    newVariant.title === cartVariant.title &&
-                    newVariant._id === cartVariant._id
-                );
-              }))
-          );
+        const newItemsProductId = items.filter((itemCart: CartItem) => {
+          const differentProductId = itemCart.product?._id !== product._id;
+          return differentProductId;
         });
+        const newItemsVariants = items.filter((itemCart: CartItem) => {
+          const noMatchingVariants =
+            !product.variants || // Thêm điều kiện kiểm tra xem sản phẩm có biến thể không
+            !itemCart.product?.variants.some((cartVariant) =>
+              product.variants.some(
+                (newVariant) =>
+                  newVariant.title === cartVariant.title &&
+                  newVariant._id === cartVariant._id
+              )
+            );
 
-        return set({ items: newItems }, false, { type: "cart/removeCart" });
+          return noMatchingVariants;
+        });
+        if (product.variants && product.variants.length > 0) {
+          return set({ items: newItemsVariants }, false, {
+            type: "cart/removeCart",
+          });
+        } else {
+          return set({ items: newItemsProductId }, false, {
+            type: "cart/removeCart",
+          });
+        }
       },
 
       removeAll: () => {
         return set({ items: [] }, false, { type: "cart/removeCartAll" });
       },
-      // increase: (id: string) => {
-      //   const items = get().items;
-      //   const found = items.find(
-      //     (itemCart: CartItem) => itemCart.product?._id === id
-      //   );
-      //   if (found) {
-      //     found.quantity++;
-      //   }
-      //   return set({ items: [...items] }, false, { type: "cart/increase" });
-      // },
-      // decrease: (id: string) => {
-      //   const items = get().items;
-      //   const found = items.find(
-      //     (itemCart: CartItem) => itemCart.product?._id === id
-      //   );
-      //   if (found && found.quantity === 1) {
-      //     const newItems = items.filter(
-      //       (itemCart: CartItem) => itemCart.product?._id !== found.product?._id
-      //     );
-      //     return set({ items: [...newItems] }, false, {
-      //       type: "cart/decrease",
-      //     });
-      //   } else if (found) {
-      //     found.quantity--;
-      //     return set({ items: [...items] }, false, { type: "cart/decrease" });
-      //   }
-      // },
     })),
     persistOptions
   )
