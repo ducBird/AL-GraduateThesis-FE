@@ -25,8 +25,7 @@ function HotProductsHome(props: IProductsProps) {
             return (
               <div
                 key={index}
-                className="w-[270px] text-center border mb-5 justify-center rounded-md
-    shadow-md "
+                className="w-[270px] text-center border mb-10 justify-center rounded-md shadow-md"
               >
                 <Product product={item} key={item?._id} />
               </div>

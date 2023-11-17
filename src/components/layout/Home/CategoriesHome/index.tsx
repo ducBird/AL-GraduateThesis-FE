@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { IoFastFood } from "react-icons/io5";
 import { ICategory } from "../../../../interfaces/ICategory";
 import { IProduct } from "../../../../interfaces/IProducts";
 import Product from "../../Shop/Product";
+import imageCategory from "../../../../assets/AquaticLogo-modified.png";
 interface IProps {
   categories: ICategory[];
   products: IProduct[];
@@ -46,7 +46,9 @@ function CategoriesHome(props: IProps) {
                   } group-hover:bg-white 
                   flex items-center justify-center`}
                 >
-                  <IoFastFood
+                  <img
+                    src={imageCategory}
+                    alt="image"
                     className={`${
                       filter === categoryId ? "text-black" : "text-white"
                     } group-hover:text-black text-lg`}

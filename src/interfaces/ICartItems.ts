@@ -1,6 +1,6 @@
 import { IProduct } from "./IProducts";
 
 export interface CartItems {
-  product: IProduct;
+  product: IProduct | null;
   quantity: number;
 }

@@ -4,13 +4,13 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { IProduct } from "../../../../interfaces/IProducts";
 import numeral from "numeral";
+import PopupView from "../Popup/PopupView";
+import PopupVariantOption from "../Popup/PopupVariantOption";
 import { AiOutlineHeart } from "react-icons/ai";
 import {
   WishlistItem,
   useProductWishlist,
 } from "../../../../hooks/useProductWishlist";
-import PopupView from "../Popup/PopupView";
-import PopupVariantOption from "../Popup/PopupVariantOption";
 interface IProps {
   product: IProduct;
 }
@@ -69,6 +69,18 @@ function Product(props: IProps) {
     }
   };
   const favoriteStatus = localStorage.getItem(`favorite_${productItem?._id}`);
+
+  // hàm tính trung bình cộng rating của sản phẩm
+  const averageRating = () => {
+    if (productItem?.reviews && productItem.reviews.length > 0) {
+      const sumRating = productItem.reviews.reduce(
+        (accumulator, review) => accumulator + review.rating,
+        0
+      );
+      return sumRating / productItem.reviews.length;
+    }
+    return 0; // Trả về 0 nếu không có đánh giá
+  };
   useEffect(() => {
     setProductItem(product);
 
@@ -79,7 +91,7 @@ function Product(props: IProps) {
   }, [product, favoriteStatus]);
 
   return (
-    <div className="relative border border-gray-300 rounded-md h-[430px] shadow-md ">
+    <div className="relative border border-gray-300 rounded-md h-[450px] shadow-md ">
       <Link to={link} onClick={() => window.scrollTo(0, 0)}>
         <div>
           <img
@@ -89,6 +101,16 @@ function Product(props: IProps) {
           />
           <div>
             <p className="h-[50px] font-bold px-1">{productItem?.name} </p>
+            {/* <div className="min-h-[30px]">
+            {productItem?.variants?.map((item: any, index: number) => {
+              return (
+                <span key={item._id}>
+                  {item?.options[0]?.value}{" "}
+                  {index !== productItem.variants.length - 1 ? "-" : ""}{" "}
+                </span>
+              );
+            })}
+          </div> */}
           </div>
           <div className="price text-lg text-primary_green mb-3 mt-3 font-bold">
             <span>
@@ -98,7 +120,10 @@ function Product(props: IProps) {
                   {numeral(maxPrice).format("0,0").replace(/,/g, ".")} vnđ
                 </span>
               ) : (
-                ""
+                <span>
+                  {numeral(productItem?.price).format("0,0").replace(/,/g, ".")}{" "}
+                  vnđ
+                </span>
               )}
             </span>
           </div>
@@ -110,6 +135,16 @@ function Product(props: IProps) {
           ) : (
             ""
           )}
+          {productItem?.reviews?.length !== undefined &&
+            productItem?.reviews?.length > 0 && (
+              <div>
+                <Rate
+                  allowHalf
+                  disabled
+                  value={parseFloat(averageRating().toFixed(1))}
+                />
+              </div>
+            )}
         </div>
       </Link>
       <div
@@ -129,7 +164,7 @@ function Product(props: IProps) {
         <motion.div whileTap={{ scale: 0.85 }} className=" cursor-pointer">
           <button
             className={`px-4 py-1 border rounded-full bg-primary_green text-white 
-              } `}
+            } `}
             onClick={() => {
               openPopup("variant");
               setProductId(productItem?._id);

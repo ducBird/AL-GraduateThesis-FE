@@ -17,7 +17,7 @@ export const useUser = create(
       addUser: (customer: ICustomer) => {
         const users = get().users;
         Object.assign(users, customer);
-        return set((state) => ({ users: users }), false, {
+        return set(() => ({ users: users }), false, {
           type: "addUser",
         });
       },
