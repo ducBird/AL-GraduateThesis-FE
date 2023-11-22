@@ -30,7 +30,7 @@ const Cart = (props: Props) => {
   const [openLogin, setOpenLogin] = useState(false);
   const [customer, setCustomer] = useState<ICustomer[]>([]);
   const handleLogin = () => {
-    setOpenLogin(true);
+    setOpenLogin(!openLogin);
   };
   // tính tổng giỏ hàng
   let totalOrder = 0;
@@ -47,12 +47,14 @@ const Cart = (props: Props) => {
   } else if (items && items.length > 0) {
     // If there is no customer cart, calculate total based on 'items'
     totalOrder = items.reduce((total, item) => {
-      const variantsPrice =
-        item.product?.variants[0]?.price || item.product?.price || 0;
+      if (item.product?.variants !== undefined && item.product !== undefined) {
+        const variantsPrice =
+          item.product?.variants[0]?.price || item.product?.price || 0;
 
-      const priceDiscount =
-        (variantsPrice * (100 - item.product?.discount)) / 100;
-      return total + (priceDiscount || 0) * (item.quantity || 0);
+        const priceDiscount =
+          (variantsPrice * (100 - item.product?.discount)) / 100;
+        return total + (priceDiscount || 0) * (item.quantity || 0);
+      }
     }, 0);
   }
 

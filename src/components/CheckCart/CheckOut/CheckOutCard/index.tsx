@@ -30,6 +30,7 @@ function CheckOutCard({
   onPointStatusChange, // Hàm callback để thông báo thay đổi pointStatus
   onTotalChange, // Nhận hàm callback từ component cha
 }: Props) {
+  console.log("paymentFunction", paymentFunction);
   const [pointStatus, setPointStatus] = useState(false);
   const [showPopupVoucher, setShowPopupVoucher] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<IVouchers | null>(
@@ -102,7 +103,7 @@ function CheckOutCard({
           </thead>
           <tbody>
             {customer.customer_cart && customer.customer_cart.length > 0 ? (
-              customer.customer_cart.map((item, index) => {
+              customer.customer_cart.map((item: any, index) => {
                 const priceDiscount =
                   (item.variants?.price * (100 - item.product?.discount)) / 100;
                 return (
@@ -184,8 +185,8 @@ function CheckOutCard({
               <th>Vận chuyển</th>
               <td className="">
                 {/* <p className="justify-end">
-                {numeral(20000).format("0,0").replace(/,/g, ".")} vnđ
-              </p> */}
+                  {numeral(20000).format("0,0").replace(/,/g, ".")} vnđ
+                </p> */}
               </td>
             </tr>
             <div className="voucher flex justify-between p-3 border-t-2 font-bold">
@@ -269,9 +270,11 @@ function CheckOutCard({
           </div>
         ) : (
           <button
-            type="submit"
+            type={paymentMethod === "CASH" ? "submit" : "button"}
             className="w-[100%] rounded-[20px] py-3 text-white font-bold hover:bg-opacity-[0.8] bg-primary_green"
-            onClick={() => onTotalChange(total)}
+            onClick={() => {
+              onTotalChange(total), paymentFunction();
+            }}
           >
             ĐẶT HÀNG
           </button>
