@@ -29,22 +29,13 @@ const LoginCart = (props: Props) => {
           response.data.refresh_token
         );
         window.localStorage.setItem("access_token", response.data.access_token);
+        window.localStorage.removeItem("cart-storage");
         message.success(response.data.msg);
-        // Lấy đường dẫn hiện tại
-        const currentPath = window.location.pathname;
 
-        // Kiểm tra đường dẫn hiện tại
-        if (currentPath === "/component/checkcart/checkout") {
-          // Nếu đang ở "/component/checkcart/checkout", chuyển hướng trở lại đó
-          setTimeout(() => {
-            window.location.href = "/component/checkcart/checkout";
-          }, 1000);
-        } else {
-          // Nếu không ở "/component/checkcart/checkout", chuyển hướng về trang chính (home)
-          setTimeout(() => {
-            window.location.href = "/";
-          }, 1000);
-        }
+        // Nếu không ở "/component/checkcart/checkout", chuyển hướng về trang chính (home)
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
       })
       .catch((err) => {
         message.error(err.response.data.msg);
@@ -67,7 +58,7 @@ const LoginCart = (props: Props) => {
   return (
     <div>
       <div
-        className={`fixed h-screen z-20 w-[100%] bg-black/50 ${
+        className={`fixed h-[100%] z-20 w-[100%] bg-black/50 ${
           openLogin ? `visible` : `invisible`
         }`}
         onClick={handleLoginClose}
@@ -153,9 +144,13 @@ const LoginCart = (props: Props) => {
                     <span>Nhớ mật khẩu</span>
                   </label>
                 </div>
-                <h2 className="text-[15px] text-primary_green cursor-pointer hover:opacity-[0.7]">
+                <Link
+                  to={"/component/auth/authentication-email"}
+                  onClick={handleLoginClose}
+                  className="text-[15px] text-primary_green cursor-pointer hover:opacity-90"
+                >
                   Quên mật khẩu
-                </h2>
+                </Link>
               </div>
             </Form.Item>
           </Form>
