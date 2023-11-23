@@ -11,6 +11,7 @@ import {
   WishlistItem,
   useProductWishlist,
 } from "../../../../hooks/useProductWishlist";
+import { Rate } from "antd";
 interface IProps {
   product: IProduct;
 }

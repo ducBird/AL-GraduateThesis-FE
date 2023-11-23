@@ -1,33 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { FiMenu } from "react-icons/fi";
 import { RiShoppingCartLine } from "react-icons/ri";
-// import { RxPerson } from "react-icons/rx";
+import { RxPerson } from "react-icons/rx";
 import { BiSearchAlt } from "react-icons/bi";
 import { AiOutlineHeart } from "react-icons/ai";
 import { IoIosGitCompare } from "react-icons/io";
 import Navbar from "./Navbar";
 import NavPage from "./Subnav/NavPage";
 import Cart from "../../../components/Cart";
-// import LoginCart from "../../Auth/Login/LoginCard";
+import LoginCart from "../../Auth/Login/LoginCard";
 import AquaticLogo from "../../../assets/ImageAquaticLand.png";
 import { useCarts } from "../../../hooks/useCart";
 import { useNavigate } from "react-router-dom";
 import { useProductWishlist } from "../../../hooks/useProductWishlist";
 import SearchPopup from "./Search/index";
+import { ICustomer } from "../../../interfaces/ICustomers";
+import { axiosClient } from "../../../libraries/axiosClient";
+import { useUser } from "../../../hooks/useUser";
 
 export default function Header() {
-  // const [openLogin, setOpenLogin] = React.useState(false);
+  const [openLogin, setOpenLogin] = React.useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [windowSize, setWindowSize] = useState({
     width: 0,
     height: 0,
   });
+  3;
   const [isMobile, setIsMobile] = useState(false);
   const [showPopupSearch, setShowPopupSearch] = useState(false);
+  const [custommer, setCustomer] = useState<ICustomer[]>([]);
   // zustand
-  const { items } = useCarts((state) => state);
-  const { wishlist_items } = useProductWishlist((state) => state);
+  const { items } = useCarts((state) => state) as any;
+  const { users } = useUser((state) => state) as any;
+  const { wishlist_items } = useProductWishlist((state) => state) as any;
   const quantityCart = items.reduce((total, item) => {
     // cast biến item sang kiểu dữ liệu number
     const cartItem = item as { quantity: number };
@@ -42,9 +48,9 @@ export default function Header() {
   const handleCart = () => {
     setOpenCart(true);
   };
-  // const handleLogin = () => {
-  //   setOpenLogin(true);
-  // };
+  const handleLogin = () => {
+    setOpenLogin(true);
+  };
   const closePopup = () => {
     setShowPopupSearch(false);
   };
@@ -52,18 +58,18 @@ export default function Header() {
   // const userStorage = localStorage.getItem("user-storage") ?? "";
   // const parsedUser = userStorage ? JSON.parse(userStorage) : null;
   // const user = parsedUser && Object.keys(parsedUser.state.users).length !== 0;
-  // const refresh_token = localStorage.getItem("refresh_token");
-  // useEffect(() => {
-  //   const handleSize = () => {
-  //     setWindowSize({
-  //       width: window.innerWidth,
-  //       height: window.innerHeight,
-  //     });
-  //   };
-  //   window.addEventListener("resize", handleSize);
-  //   handleSize();
-  //   return () => window.removeEventListener("resize", handleSize);
-  // }, []);
+  const refresh_token = localStorage.getItem("refresh_token");
+  useEffect(() => {
+    const handleSize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+    window.addEventListener("resize", handleSize);
+    handleSize();
+    return () => window.removeEventListener("resize", handleSize);
+  }, []);
 
   useEffect(() => {
     if (windowSize.width < 500) {
@@ -74,6 +80,15 @@ export default function Header() {
     // console.log(windowSize);
   }, [windowSize]);
 
+  useEffect(() => {
+    axiosClient.get("/customers").then((response) => {
+      response.data.find((item) => {
+        if (item?._id === users.user?._id) {
+          setCustomer(item);
+        }
+      });
+    });
+  }, [users.user?._id]);
   return (
     <main className="relative w-full">
       <div className="mobile-header w-full fixed z-10 bg-white">
@@ -117,7 +132,9 @@ export default function Header() {
                   </span>
                   <span className="bg-primary_green w-5 h-5 rounded-full flex items-center justify-center ms-[6px]">
                     <span className="text-[10px] leading-3 font-bold text-white">
-                      {quantityCart}
+                      {users?.user && custommer?.customer_cart
+                        ? custommer?.customer_cart.length
+                        : quantityCart}
                     </span>
                   </span>
                 </a>
@@ -132,7 +149,7 @@ export default function Header() {
                     <BiSearchAlt size={24} />
                   </span>
                 </a>
-                {/* <a
+                <a
                   onClick={() => {
                     if (refresh_token) {
                       navigate("/history-order-user");
@@ -146,7 +163,7 @@ export default function Header() {
                   <span className="relative flex item-center justify-center">
                     <RxPerson size={24} />
                   </span>
-                </a> */}
+                </a>
                 <a
                   onClick={() => {
                     navigate("/wishlist");
@@ -176,7 +193,9 @@ export default function Header() {
                   <span className="relative flex item-center justify-center">
                     <RiShoppingCartLine size={24} />
                     <span className="absolute top-[-5px] end-[-9px] bg-primary_green text-white text-[9px] w-[15px] h-[15px] leading-[15px] text-center font-normal rounded-full z-[1]">
-                      {quantityCart}
+                      {users?.user && custommer?.customer_cart
+                        ? custommer?.customer_cart.length
+                        : quantityCart}
                     </span>
                   </span>
                 </a>
@@ -193,7 +212,7 @@ export default function Header() {
         closeNavbar={closeNavbar}
       />
       <Cart openCart={openCart} setOpenCart={setOpenCart} />
-      {/* <LoginCart openLogin={openLogin} setOpenLogin={setOpenLogin} /> */}
+      <LoginCart openLogin={openLogin} setOpenLogin={setOpenLogin} />
       <SearchPopup showPopup={showPopupSearch} closePopup={closePopup} />
     </main>
   );
