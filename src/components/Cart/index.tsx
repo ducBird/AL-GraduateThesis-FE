@@ -86,7 +86,6 @@ const Cart = (props: Props) => {
       });
     });
   }, [users.user?._id]);
-
   return (
     <div className="overflow-y-auto">
       <div

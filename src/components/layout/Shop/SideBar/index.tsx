@@ -199,7 +199,7 @@ function SideBar({
             )}
 
             {searchProducts.length > 0 ? (
-              searchProducts.map((item) => {
+              searchProducts.map((item, index) => {
                 let minPrice = 0;
                 let maxPrice = 0;
 
@@ -218,6 +218,7 @@ function SideBar({
                       closeSitebarOnClick();
                       window.scrollTo(0, 0);
                     }}
+                    key={index}
                   >
                     <div className="border-b flex my-3">
                       <img

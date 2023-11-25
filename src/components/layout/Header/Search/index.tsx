@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { MdOutlineClose } from "react-icons/md";
+import ReactModal from "react-modal";
 import { IProduct } from "../../../../interfaces/IProducts";
 import { axiosClient } from "../../../../libraries/axiosClient";
 import { Link, useNavigate } from "react-router-dom";
 import numeral from "numeral";
+import Product from "../../Shop/Product";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 interface IModalProps {
   showPopup: boolean;
@@ -11,7 +13,7 @@ interface IModalProps {
 }
 
 const SearchPopup: React.FC<IModalProps> = ({ closePopup, showPopup }) => {
-  // const [products, setProducts] = useState<IProduct | null>(null);
+  const [products, setProducts] = useState<IProduct | null>(null);
 
   // xử lý click tìm kiếm
   const [searchValue, setSearchValue] = useState<string>("");
@@ -53,9 +55,9 @@ const SearchPopup: React.FC<IModalProps> = ({ closePopup, showPopup }) => {
     const fetchDataProducts = async () => {
       try {
         const response = await axiosClient.get("/products");
-        // setProducts(response.data);
+        setProducts(response.data);
         if (formattedValue) {
-          const filteredProducts = response.data.filter((product: IProduct) => {
+          const filteredProducts = response.data.filter((product) => {
             return product.name
               .toLowerCase()
               .includes(formattedValue.toLowerCase());
@@ -114,11 +116,11 @@ const SearchPopup: React.FC<IModalProps> = ({ closePopup, showPopup }) => {
             </Link>
           </div>
         </div>
-        <div className="text-center mt-5 px-4 max-h-[430px] overflow-y-auto">
+        <div className="text-center mt-5 px-4 max-h-[575px] overflow-y-auto">
           {searchValue !== "" ? (
             <div
               className={`${
-                searchProducts.length > 0 ? "grid grid-cols-6 gap-4" : ""
+                searchProducts.length > 0 ? "grid grid-cols-6 gap-4 mb-4" : ""
               } `}
             >
               {searchProducts.length > 0 ? (
@@ -127,14 +129,12 @@ const SearchPopup: React.FC<IModalProps> = ({ closePopup, showPopup }) => {
                   let maxPrice = 0;
 
                   if (item.variants.length > 0) {
-                    const prices = item.variants
-                      .map((variant) => numeral(variant.price).value())
-                      .filter((price) => price !== null) as number[];
+                    const prices = item.variants.map((variant) =>
+                      numeral(variant.price).value()
+                    );
 
-                    if (prices.length > 0) {
-                      minPrice = Math.min(...prices);
-                      maxPrice = Math.max(...prices);
-                    }
+                    minPrice = Math.min(...prices);
+                    maxPrice = Math.max(...prices);
                   }
                   return (
                     <Link

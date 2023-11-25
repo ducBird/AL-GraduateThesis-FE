@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import numeral from "numeral";
 import { Link } from "react-router-dom";
@@ -6,7 +6,6 @@ import { PayPalButton } from "react-paypal-button-v2";
 import Vouchers from "../../../Vouchers";
 import { IVouchers } from "../../../../interfaces/IVouchers";
 import { ICustomer } from "../../../../interfaces/ICustomers";
-
 type Props = {
   totalOrder: number;
   paymentMethod: string;
@@ -17,6 +16,7 @@ type Props = {
   customer: ICustomer[];
   onPointStatusChange: any;
   onTotalChange: any;
+  paymentFunction: any;
 };
 
 function CheckOutCard({
@@ -29,8 +29,8 @@ function CheckOutCard({
   customer,
   onPointStatusChange, // Hàm callback để thông báo thay đổi pointStatus
   onTotalChange, // Nhận hàm callback từ component cha
+  paymentFunction,
 }: Props) {
-  console.log("paymentFunction", paymentFunction);
   const [pointStatus, setPointStatus] = useState(false);
   const [showPopupVoucher, setShowPopupVoucher] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<IVouchers | null>(
@@ -253,7 +253,7 @@ function CheckOutCard({
         </table>
       </div>
       <div className="flex flex-col gap-3 mt-10">
-        {paymentMethod === "paypal" && sdkReady ? (
+        {paymentMethod === "PAYPAL" && sdkReady ? (
           <div className="z-0">
             <PayPalButton
               amount={parseFloat((total / 20000).toFixed(2))}

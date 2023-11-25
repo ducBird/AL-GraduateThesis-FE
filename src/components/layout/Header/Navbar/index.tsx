@@ -72,7 +72,7 @@ const Navbar = (props: Props) => {
   useEffect(() => {
     axiosClient.get("/products").then((response) => {
       if (formattedValue) {
-        const filteredProducts = response.data.filter((product: IProduct) => {
+        const filteredProducts = response.data.filter((product) => {
           return product.name
             .toLowerCase()
             .includes(formattedValue.toLowerCase());
@@ -146,14 +146,12 @@ const Navbar = (props: Props) => {
                   let maxPrice = 0;
 
                   if (item.variants.length > 0) {
-                    const prices = item.variants
-                      .map((variant) => numeral(variant.price).value())
-                      .filter((price) => price !== null) as number[];
+                    const prices = item.variants.map((variant) =>
+                      numeral(variant.price).value()
+                    );
 
-                    if (prices.length > 0) {
-                      minPrice = Math.min(...prices);
-                      maxPrice = Math.max(...prices);
-                    }
+                    minPrice = Math.min(...prices);
+                    maxPrice = Math.max(...prices);
                   }
                   return (
                     <Link

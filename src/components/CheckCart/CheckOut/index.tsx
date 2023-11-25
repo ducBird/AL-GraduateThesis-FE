@@ -6,6 +6,7 @@ import { useUser } from "../../../hooks/useUser";
 import CheckOutCard from "./CheckOutCard";
 import { IAccumulated } from "../../../interfaces/Accumulated";
 import { ICustomer } from "../../../interfaces/ICustomers";
+import PopupVnpayReturnUrl from "./PopupVnpayReturnUrl";
 interface IOrderDetails {
   product_id: string;
   variants_id: string;
@@ -27,6 +28,7 @@ const ordersSchema = Yup.object({
     .max(100, "Địa chỉ phải dài từ 5 - 100 ký tự")
     .required("Địa chỉ không được trống"),
 });
+
 const CheckOut = () => {
   // payment paypal
   const { users, updateUser } = useUser((state) => state) as any;
@@ -275,7 +277,6 @@ const CheckOut = () => {
 
   // momo
   const resultCode = queryParams.get("resultCode");
-  const message = queryParams.get("message");
   const amount = queryParams.get("amount");
   useEffect(() => {
     if (vnpResponseCode === "00" && vnpTransactionStatus === "00") {
@@ -427,10 +428,20 @@ const CheckOut = () => {
         console.error(error);
         window.alert("Đặt hàng với thanh toán vnpay thất bại");
       }
+    } else {
+      alert("Thanh toán thất bại, hủy thanh toán !!!");
+      setTimeout(() => {
+        window.location.replace("/shop");
+        window.localStorage.removeItem("totalForVnpay");
+        window.localStorage.removeItem("customerdata");
+        window.localStorage.removeItem("formValues");
+      }, 2000);
     }
   };
   useEffect(() => {
-    onSuccessVnpay();
+    if (vnpResponseCode && vnpTransactionStatus) {
+      onSuccessVnpay();
+    }
   }, [vnpResponseCode, vnpTransactionStatus]);
 
   // thanh toán momo
@@ -497,10 +508,20 @@ const CheckOut = () => {
         console.error(error);
         window.alert("Đặt hàng với thanh toán momo thất bại");
       }
+    } else {
+      alert("Thanh toán thất bại, hủy thanh toán !!!");
+      setTimeout(() => {
+        window.location.replace("/shop");
+        window.localStorage.removeItem("customerdata");
+        window.localStorage.removeItem("formValues");
+      }, 2000);
     }
   };
   useEffect(() => {
-    onSuccessMoMo();
+    // Kiểm tra xem resultCode có giá trị không
+    if (resultCode) {
+      onSuccessMoMo();
+    }
   }, [resultCode]);
 
   useEffect(() => {
@@ -513,7 +534,6 @@ const CheckOut = () => {
         console.log(err);
       });
   }, []);
-
   return (
     <>
       <div className="w-full bg-primary_green lg:h-[75px] lg:p-10 h-auto p-5 text-center">
@@ -522,7 +542,7 @@ const CheckOut = () => {
         </h1>
       </div>
       <form action="" onSubmit={formik.handleSubmit}>
-        <div className="container">
+        <div className="container lg:px-0 px-10">
           <div className="md:grid md:grid-cols-12">
             <div className="md:col-span-7 md:mr-4">
               <div className="flex mt-8 gap-2">

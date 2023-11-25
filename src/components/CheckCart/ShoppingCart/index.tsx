@@ -278,7 +278,7 @@ const ShoppingCart = () => {
                                     ? `${numeral(item.quantity * priceDiscount)
                                         .format("")
                                         .replace(/,/g, ".")}
-                                    vnđ`
+                                      vnđ`
                                     : `${numeral(
                                         (item.quantity *
                                           (item.product?.price *
@@ -287,7 +287,7 @@ const ShoppingCart = () => {
                                       )
                                         .format("")
                                         .replace(/,/g, ".")}
-                                  vnđ`}
+                                    vnđ`}
                                 </span>
                               </div>
                             </div>
@@ -403,7 +403,7 @@ const ShoppingCart = () => {
                                         )
                                           .format("")
                                           .replace(/,/g, ".")}
-                                    vnđ`
+                                      vnđ`
                                       : `${numeral(
                                           (item.quantity *
                                             (item.product?.price *
@@ -412,7 +412,7 @@ const ShoppingCart = () => {
                                         )
                                           .format("")
                                           .replace(/,/g, ".")}
-                                  vnđ`}
+                                    vnđ`}
                                   </span>
                                 </div>
                               </td>
