@@ -4,14 +4,16 @@ import ReactModal from "react-modal";
 import { axiosClient } from "../../libraries/axiosClient";
 import { IVouchers } from "../../interfaces/IVouchers";
 import numeral from "numeral";
-import { Radio } from "antd";
+import { Radio, RadioChangeEvent } from "antd";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 // Thiết lập các style cho modal
 const customStyles = {
   overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   content: {
-    top: "52%",
+    top: "54%",
     left: "50%",
     right: "auto",
     bottom: "auto",
@@ -36,6 +38,11 @@ const Vouchers: React.FC<IModalProps> = ({
   totalOrder,
   onSelectedVoucherChange,
 }) => {
+  dayjs.extend(customParseFormat);
+  // Ngày hiện tại
+  const today = dayjs();
+  const dateFormat = "YYYY-MM-DD";
+  console.log("today", today.format(dateFormat));
   const [selectedVoucher, setSelectedVoucher] = useState<IVouchers | null>(
     null
   );
@@ -87,15 +94,24 @@ const Vouchers: React.FC<IModalProps> = ({
           >
             {vouchers &&
               vouchers.map((voucher, index) => {
+                console.log(voucher.startDate);
                 return (
                   <div key={index}>
                     <div>
                       <Radio
                         key={index}
                         value={index}
-                        disabled={totalOrder < voucher.minimumOrderAmount}
+                        disabled={
+                          totalOrder < voucher.minimumOrderAmount ||
+                          voucher.isActive === false ||
+                          today.isBefore(dayjs(voucher.startDate)) ||
+                          today.isAfter(dayjs(voucher.expirationDate))
+                        }
                         className={`${
-                          totalOrder < voucher.minimumOrderAmount
+                          totalOrder < voucher.minimumOrderAmount ||
+                          voucher.isActive === false ||
+                          today.isBefore(dayjs(voucher.startDate)) ||
+                          today.isAfter(dayjs(voucher.expirationDate))
                             ? "opacity-50"
                             : ""
                         } my-5 mx-5 border rounded-lg p-5 text-black font-bold flex shadow-lg`}
@@ -117,6 +133,26 @@ const Vouchers: React.FC<IModalProps> = ({
                             vnđ
                           </p>
                           <p>HSD {voucher.expirationDate.toLocaleString()}</p>
+                          {totalOrder < voucher.minimumOrderAmount && (
+                            <p className="text-red-500">
+                              Giá trị đơn hàng chưa đủ!
+                            </p>
+                          )}
+                          {voucher.isActive === false && (
+                            <p className="text-red-500">
+                              Voucher tạm thời ngừng hoạt động!
+                            </p>
+                          )}
+                          {today.isBefore(dayjs(voucher.startDate)) && (
+                            <p className="text-red-500">
+                              Voucher chưa bắt đầu!
+                            </p>
+                          )}
+                          {today.isAfter(dayjs(voucher.expirationDate)) && (
+                            <p className="text-red-500">
+                              Voucher đã hết hạn xử dụng!
+                            </p>
+                          )}
                         </div>
                       </Radio>
                     </div>

@@ -1,7 +1,9 @@
 import { AiOutlineHeart } from "react-icons/ai";
 import { IoIosGitCompare } from "react-icons/io";
 import { RxPerson } from "react-icons/rx";
+import { useUser } from "../hooks/useUser";
 
+// const link = `/sse/customer-sse/${customerId}`;
 export const PageMenuData = [
   {
     value: "Trang chủ",

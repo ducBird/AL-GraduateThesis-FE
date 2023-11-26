@@ -20,6 +20,7 @@ import AuthEmail from "./components/Auth/ForgotPassword/AuthEmail";
 import ResetPassword from "./components/Auth/ForgotPassword/ResetPassword";
 import ProductRewiews from "./components/layout/Shop/ProductReviews";
 import ChangePassword from "./components/Auth/ChangePassword";
+import Notification from "./components/Notification";
 function App() {
   const { users, initialize, refreshToken } = useUser((state) => state) as any;
 
@@ -97,6 +98,10 @@ function App() {
             <Route
               path="/customers/activate/:activation_token"
               element={<ActivationEmail />}
+            />
+            <Route
+              path="/sse/customer-sse/:customerId"
+              element={<Notification />}
             />
 
             <Route
