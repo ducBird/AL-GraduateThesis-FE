@@ -37,7 +37,6 @@ function ProductRewiews() {
       }
     });
   }, [selectedOrderStatus]);
-
   useEffect(() => {
     axiosClient.get("/product-review").then((response) => {
       setProductReviews(response.data);
@@ -87,11 +86,28 @@ function ProductRewiews() {
           const existingReview = productReviews.find(
             (review) => review?.order_id === order?._id?.toString()
           );
+          const statusColors = {
+            "WAIT FOR CONFIRMATION": "text-red-500",
+            "WAITING FOR PICKUP": "text-yellow-500",
+            DELIVERING: "text-blue-500",
+            DELIVERED: "text-green-500",
+            RECEIVED: "#177245",
+            CANCELLED: "text-red-500",
+            RETURNS: "text-red-500",
+            RETURNING: "#1b392a",
+            RETURNED: "text-black",
+          };
           return (
             <div key={index} className="w-[80%] mx-auto">
               <div className="mt-10 text-right border p-5 flex justify-end font-bold gap-4">
-                <p className="text-red-500 ">
-                  {findStatusLabel(order.status).toLocaleUpperCase()}
+                {order?.payment_status === true ? (
+                  <p className="text-primary_green">ĐÃ THANH TOÁN</p>
+                ) : (
+                  <p className="text-red-500">CHƯA THANH TOÁN</p>
+                )}
+
+                <p className={`border-l pl-4 ${statusColors[order?.status]}`}>
+                  {findStatusLabel(order?.status).toLocaleUpperCase()}
                 </p>
                 {existingReview && existingReview.reviewCount > 0 ? (
                   <div className="border-l">
@@ -125,8 +141,28 @@ function ProductRewiews() {
                           />
                         </div>
                         <div className="">
-                          <p className="">{item.product?.name}</p>
-                          <span>Số lượng: {item.quantity}</span>
+                          <p className="">
+                            {item.product?.name}
+                            {item.variants && (
+                              <span> - {item.variants?.title}</span>
+                            )}
+                          </p>
+                          <p>Số lượng: {item.quantity}</p>
+                          <p>
+                            Giá tiền:{" "}
+                            {item.variants
+                              ? `${numeral(item.variants?.price)
+                                  .format("0,0")
+                                  .replace(/,/g, ".")}
+                              vnđ`
+                              : `${numeral(item.product?.price)
+                                  .format("0,0")
+                                  .replace(/,/g, ".")}
+                            vnđ`}
+                          </p>
+                          {item.product.discount > 0 && (
+                            <p>Giảm giá: {item.product.discount} %</p>
+                          )}
                         </div>
                       </div>
                     );

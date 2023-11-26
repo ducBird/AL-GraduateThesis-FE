@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FiMenu } from "react-icons/fi";
 import { RiShoppingCartLine } from "react-icons/ri";
-import { RxPerson } from "react-icons/rx";
+import { RxBell, RxPerson } from "react-icons/rx";
 import { BiSearchAlt } from "react-icons/bi";
 import { AiOutlineHeart } from "react-icons/ai";
 import { IoIosGitCompare } from "react-icons/io";
@@ -30,9 +30,11 @@ export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
   const [showPopupSearch, setShowPopupSearch] = useState(false);
   const [custommer, setCustomer] = useState<ICustomer[]>([]);
+  const [notificationData, setNotificationData] = useState<any>(null);
   // zustand
   const { items } = useCarts((state) => state) as any;
   const { users } = useUser((state) => state) as any;
+  const customerId = users.user?._id;
   const { wishlist_items } = useProductWishlist((state) => state) as any;
   const quantityCart = items.reduce((total, item) => {
     // cast biến item sang kiểu dữ liệu number
@@ -89,6 +91,17 @@ export default function Header() {
       });
     });
   }, [users.user?._id]);
+  useEffect(() => {
+    axiosClient.get("/notifications").then((response) => {
+      // Lọc dữ liệu để chỉ giữ lại các thông báo của customerId
+      const filteredNotifications = response.data.filter(
+        (notification) => notification.customer_id === customerId
+      );
+
+      setNotificationData(filteredNotifications);
+    });
+  }, []);
+  const link = `/sse/customer-sse/${users.user?._id}`;
   return (
     <main className="relative w-full">
       <div className="mobile-header w-full fixed z-10 bg-white">
@@ -162,6 +175,20 @@ export default function Header() {
                 >
                   <span className="relative flex item-center justify-center">
                     <RxPerson size={24} />
+                  </span>
+                </a>
+                <a
+                  onClick={() => {
+                    navigate(link);
+                    window.scrollTo(0, 0);
+                  }}
+                  className="flex justify-center items-center h-[40px] leading-none px-[10px] text-gray-800 cursor-pointer"
+                >
+                  <span className="relative flex item-center justify-center">
+                    <RxBell size={24} />
+                    <span className="absolute top-[-5px] end-[-9px] bg-primary_green text-white text-[9px] w-[15px] h-[15px] leading-[15px] text-center font-normal rounded-full z-[1]">
+                      {notificationData?.length}
+                    </span>
                   </span>
                 </a>
                 <a
