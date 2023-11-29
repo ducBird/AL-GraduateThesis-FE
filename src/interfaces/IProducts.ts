@@ -18,4 +18,5 @@ export interface IProduct {
   variants: IVariants[];
   attributes: IAttributes[];
   reviews?: IProductReviews[] | undefined;
+  description?: string;
 }
