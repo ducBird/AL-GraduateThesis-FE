@@ -4,7 +4,7 @@ import numeral from "numeral";
 import { IProduct } from "../../../../interfaces/IProducts";
 import { useCarts } from "../../../../hooks/useCart";
 import { CartItems } from "../../../../interfaces/ICartItems";
-import { Rate } from "antd";
+import { Rate, message } from "antd";
 import { useUser } from "../../../../hooks/useUser";
 import { axiosClient } from "../../../../libraries/axiosClient";
 interface Iprops {
@@ -12,14 +12,19 @@ interface Iprops {
 }
 
 function ProductVariantOption({ product }: Iprops) {
-  const { users } = useUser((state) => state);
+  const { users } = useUser((state) => state) as any;
   const { add } = useCarts((state) => state) as any;
 
   const [quantity, setQuantity] = useState<string>("1");
   const [selectedVariants, setSelectedVariants] = useState<number[]>([]);
   const [selectedValueNames, setSelectedValueNames] = useState<string[]>([]);
-  const variants = product?.variants || [];
 
+  let productStock: number = 0;
+
+  const variants = product?.variants || [];
+  if (variants.length === 0 && product) {
+    productStock = product!.stock!;
+  }
   let minPrice = 0;
   let maxPrice = 0;
 
@@ -31,10 +36,22 @@ function ProductVariantOption({ product }: Iprops) {
   }
 
   // các nút tăng hay giảm số lượng khi đặt hàng
-  // nút trừ
+
   const handleChange = (event) => {
-    setQuantity(event.target.value);
+    const newQuantity = parseInt(event.target.value, 10);
+
+    // Kiểm tra nếu giá trị mới là một số và nó vượt quá tồn kho
+    if (
+      event.target.value === "" ||
+      (!isNaN(newQuantity) &&
+        newQuantity <= (selectedStock || productStock || 0))
+    ) {
+      setQuantity(event.target.value);
+    } else {
+      message.error("Số lượng vượt quá tồn kho");
+    }
   };
+  // nút trừ
   const minusClick = () => {
     setQuantity((prevQuantity: string) => {
       const newQuantity = parseInt(prevQuantity) - 1;
@@ -46,9 +63,20 @@ function ProductVariantOption({ product }: Iprops) {
     });
   };
 
+  // nút cộng
   const plusClick = () => {
     setQuantity((prevQuantity: string) => {
       const newQuantity = parseInt(prevQuantity, 10) + 1;
+
+      // Kiểm tra số lượng mới không vượt quá tồn kho
+      const isWithinStock = newQuantity <= (selectedStock || productStock || 0);
+
+      // Nếu số lượng mới vượt quá tồn kho, thông báo và giữ nguyên số lượng cũ
+      if (!isWithinStock) {
+        message.error("Số lượng vượt quá tồn kho");
+        return prevQuantity;
+      }
+
       return newQuantity.toString();
     });
   };
@@ -208,7 +236,6 @@ function ProductVariantOption({ product }: Iprops) {
     }
     return 0; // Trả về 0 nếu không có đánh giá
   };
-
   return (
     <div className="lg:flex">
       <div className="lg:flex-1 h-[400px] lg:h-[500px] w-full flex items-center justify-center">
@@ -236,11 +263,13 @@ function ProductVariantOption({ product }: Iprops) {
                 <p className="pt-1 underline">
                   {parseFloat(averageRating().toFixed(1))}
                 </p>
-                <Rate
-                  allowHalf
-                  disabled
-                  value={parseFloat(averageRating().toFixed(1))}
-                />
+                <div className="pt-[5px]">
+                  <Rate
+                    allowHalf
+                    disabled
+                    value={parseFloat(averageRating().toFixed(1))}
+                  />
+                </div>
               </div>
               <div className="border-l flex mt-1">
                 <p className="pl-6 underline">{product?.reviews?.length}</p>

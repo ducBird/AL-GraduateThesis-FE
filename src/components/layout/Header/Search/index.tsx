@@ -13,12 +13,18 @@ interface IModalProps {
 }
 
 const SearchPopup: React.FC<IModalProps> = ({ closePopup, showPopup }) => {
-  const [products, setProducts] = useState<IProduct | null>(null);
+  // const [products, setProducts] = useState<IProduct | null>(null);
 
   // xử lý click tìm kiếm
   const [searchValue, setSearchValue] = useState<string>("");
   const [searchProducts, setSearchProducts] = useState<IProduct[]>([]);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+  const getDisplayedProducts = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return searchProducts.slice(startIndex, endIndex);
+  };
   const formattedValue = searchValue.replace(/\s+/g, "+");
   const navigate = useNavigate();
   const handleSearch = () => {
@@ -26,7 +32,7 @@ const SearchPopup: React.FC<IModalProps> = ({ closePopup, showPopup }) => {
       navigate(`/search-products?name=${formattedValue}`);
       setSearchProducts([]);
     } else {
-      alert("Please enter your information in the search box ");
+      alert("Vui lòng nhập thông tin bạn cần tìm vào ô tìm kiếm");
     }
   };
   // hàm dùng để sử dụng phím enter để tìm kiếm
@@ -55,7 +61,6 @@ const SearchPopup: React.FC<IModalProps> = ({ closePopup, showPopup }) => {
     const fetchDataProducts = async () => {
       try {
         const response = await axiosClient.get("/products");
-        setProducts(response.data);
         if (formattedValue) {
           const filteredProducts = response.data.filter((product) => {
             return product.name
@@ -116,15 +121,15 @@ const SearchPopup: React.FC<IModalProps> = ({ closePopup, showPopup }) => {
             </Link>
           </div>
         </div>
-        <div className="text-center mt-5 px-4 max-h-[575px] overflow-y-auto">
+        <div className="text-center mt-5 px-4 max-h-[500px] overflow-y-auto">
           {searchValue !== "" ? (
             <div
               className={`${
-                searchProducts.length > 0 ? "grid grid-cols-6 gap-4 mb-4" : ""
+                searchProducts.length > 0 ? "grid grid-cols-6 gap-4 mb-10" : ""
               } `}
             >
               {searchProducts.length > 0 ? (
-                searchProducts.map((item) => {
+                getDisplayedProducts().map((item) => {
                   let minPrice = 0;
                   let maxPrice = 0;
 
@@ -190,6 +195,26 @@ const SearchPopup: React.FC<IModalProps> = ({ closePopup, showPopup }) => {
             </p>
           )}
         </div>
+        {searchValue !== "" && searchProducts.length > itemsPerPage && (
+          <div className="flex justify-center mt-5">
+            {Array.from(
+              { length: Math.ceil(searchProducts.length / itemsPerPage) },
+              (_, index) => (
+                <button
+                  key={index}
+                  className={`mx-1 p-2 rounded ${
+                    currentPage === index + 1
+                      ? "bg-primary_green text-white"
+                      : "bg-gray-200 text-gray-800 hover:bg-primary_green hover:text-white"
+                  }`}
+                  onClick={() => setCurrentPage(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              )
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

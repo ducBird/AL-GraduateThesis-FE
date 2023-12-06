@@ -148,8 +148,7 @@ const Cart = (props: Props) => {
                                 </p>
                                 <span className="flex items-center">
                                   {item.quantity}
-                                  <AiOutlineClose size={10} />
-
+                                  <span className="mx-1">x</span>
                                   <span className="text-primary_green">
                                     {item.product.variants &&
                                     item.product.variants.length > 0

@@ -10,7 +10,7 @@ interface IProps {
 }
 function CategoriesHome(props: IProps) {
   const { categories, products } = props;
-  const [filter, setFilter] = useState<string>("");
+  const [filter, setFilter] = useState<string>("654314d198153c20f4e4bc94");
   const findProductByCategoryId = products.filter(
     (product) => product?.category?._id?.toString() === filter
   );

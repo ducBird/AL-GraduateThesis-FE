@@ -12,6 +12,8 @@ import { IRemoveCartItem } from "../../../interfaces/IRemoveCartItem";
 import { ICustomer } from "../../../interfaces/ICustomers";
 import { axiosClient } from "../../../libraries/axiosClient";
 import { useUser } from "../../../hooks/useUser";
+import PopupDeleteCart from "./PopupDeleteCart";
+import { message } from "antd";
 const ShoppingCart = () => {
   // zustand
   const { items, remove, updateQuantity } = useCarts((state) => state) as any;
@@ -22,6 +24,12 @@ const ShoppingCart = () => {
   const [quantities, setQuantities] = useState<number[]>([]);
   const [quantityChange, setQuantityChange] = useState<boolean>(false);
   const [changedProductIds, setChangedProductIds] = useState<string[]>([]);
+
+  const [showDeletePopup, setShowDeletePopup] = useState<boolean>(false);
+  const [productDelete, setProductDelete] = useState<IProduct[]>([]);
+  const closePopup = () => {
+    setShowDeletePopup(false);
+  };
   // tính tổng giỏ hàng
   let totalOrder = 0;
 
@@ -47,7 +55,7 @@ const ShoppingCart = () => {
   }
 
   // dùng để group lại những sản phẩm trùng nhau và cộng dồn quantity lại với nhau
-  const groupedItems = [];
+  const groupedItems: any = [];
   if (customer.customer_cart) {
     customer.customer_cart.forEach((item) => {
       const existingItem = groupedItems.find(
@@ -72,14 +80,22 @@ const ShoppingCart = () => {
   const minusClick = (index: number) => {
     const updatedQuantities = [...quantities];
     const currentQuantity = updatedQuantities[index];
-    updatedQuantities[index] = currentQuantity - 1;
-    setQuantities(updatedQuantities);
-    setQuantityChange(true);
-    // Thêm id của sản phẩm có số lượng thay đổi vào danh sách changedProductIds
-    const changedIds = [...changedProductIds];
-    if (!changedIds.includes(items[index]?.product?._id)) {
-      changedIds.push(items[index]?.product?._id);
-      setChangedProductIds(changedIds);
+    if (currentQuantity === 1) {
+      const productToDelete = users.user
+        ? customer.customer_cart[index]
+        : items[index]?.product;
+      setProductDelete(productToDelete);
+      setShowDeletePopup(true);
+    } else {
+      updatedQuantities[index] = currentQuantity - 1;
+      setQuantities(updatedQuantities);
+      setQuantityChange(true);
+      // Thêm id của sản phẩm có số lượng thay đổi vào danh sách changedProductIds
+      const changedIds = [...changedProductIds];
+      if (!changedIds.includes(items[index]?.product?._id)) {
+        changedIds.push(items[index]?.product?._id);
+        setChangedProductIds(changedIds);
+      }
     }
   };
 
@@ -87,14 +103,54 @@ const ShoppingCart = () => {
   const plusClick = (index: number) => {
     const updatedQuantities = [...quantities];
     const currentQuantity = updatedQuantities[index];
-    updatedQuantities[index] = currentQuantity + 1;
-    setQuantities(updatedQuantities);
-    setQuantityChange(true);
-    // Thêm id của sản phẩm có số lượng thay đổi vào danh sách changedProductIds
-    const changedIds = [...changedProductIds];
-    if (!changedIds.includes(items[index]?.product?._id)) {
-      changedIds.push(items[index]?.product?._id);
-      setChangedProductIds(changedIds);
+    const newQuantity = currentQuantity + 1;
+    let product: any = {};
+
+    if (users.user) {
+      product = groupedItems[index];
+      let stock =
+        product.variants !== null
+          ? product.variants.stock
+          : product.product.stock;
+
+      // Kiểm tra nếu số lượng mới vượt quá tồn kho
+      if (newQuantity <= stock) {
+        // Cập nhật số lượng
+        updatedQuantities[index] = newQuantity;
+        setQuantities(updatedQuantities);
+        setQuantityChange(true);
+
+        // Thêm id của sản phẩm có số lượng thay đổi vào danh sách changedProductIds
+        const changedIds = [...changedProductIds];
+        if (!changedIds.includes(product?._id)) {
+          changedIds.push(product?._id);
+          setChangedProductIds(changedIds);
+        }
+      } else {
+        message.error("Số lượng vượt quá tồn kho");
+      }
+    } else {
+      product = items[index]?.product;
+      let stock =
+        product?.variants?.length > 0
+          ? product?.variants[0]?.stock
+          : product?.stock;
+      // Kiểm tra nếu số lượng mới vượt quá tồn kho
+      if (newQuantity <= stock) {
+        // Cập nhật số lượng
+        updatedQuantities[index] = newQuantity;
+        setQuantities(updatedQuantities);
+        setQuantityChange(true);
+
+        // Thêm id của sản phẩm có số lượng thay đổi vào danh sách changedProductIds
+        const changedIds = [...changedProductIds];
+        if (!changedIds.includes(product?._id)) {
+          changedIds.push(product?._id);
+          setChangedProductIds(changedIds);
+        }
+      } else {
+        message.error("Số lượng vượt quá tồn kho");
+      }
     }
   };
   const quantityUpdate = () => {
@@ -524,14 +580,18 @@ const ShoppingCart = () => {
               <ul className="block md:hidden">
                 {items &&
                   items.map((item, index) => {
+                    console.log(item);
                     const removeCart: IRemoveCartItem = {
                       product: item.product as IProduct,
                     };
                     const product = item.product;
+                    const price =
+                      product?.variants.length > 0
+                        ? product.variants[0].price
+                        : product?.price;
                     const priceDiscount =
-                      (item.product?.variants[0]?.price *
-                        (100 - item.product?.discount)) /
-                      100;
+                      (price * (100 - product?.discount)) / 100;
+                    console.log(priceDiscount);
                     return (
                       <li className="border-b" key={index}>
                         <div className="flex py-3 px-2">
@@ -556,10 +616,17 @@ const ShoppingCart = () => {
                                 Giá
                               </span>
                               <span>
-                                {numeral(priceDiscount)
-                                  .format("0,0")
-                                  .replace(/,/g, ".")}{" "}
-                                vnđ
+                                {product.variants && product.variants.length > 0
+                                  ? `${numeral(priceDiscount)
+                                      .format("0,0")
+                                      .replace(/,/g, ".")} vnđ`
+                                  : `${numeral(
+                                      (product?.price *
+                                        (100 - product?.discount)) /
+                                        100
+                                    )
+                                      .format("0,0")
+                                      .replace(/,/g, ".")} vnđ`}
                               </span>
                             </div>
                             <div className="flex justify-between border-dashed border-b-[1px] items-center py-2">
@@ -588,10 +655,21 @@ const ShoppingCart = () => {
                             <div className="flex justify-between text-primary_green font-semibold">
                               <span className="">Tổng phụ</span>
                               <span className="">
-                                {numeral(item.quantity * priceDiscount)
-                                  .format("0,0")
-                                  .replace(/,/g, ".")}{" "}
-                                vnđ
+                                {item.product.variants &&
+                                item.product.variants.length > 0
+                                  ? `${numeral(item.quantity * priceDiscount)
+                                      .format("")
+                                      .replace(/,/g, ".")}
+                                      vnđ`
+                                  : `${numeral(
+                                      (item.quantity *
+                                        (item.product?.price *
+                                          (100 - item.product?.discount))) /
+                                        100
+                                    )
+                                      .format("")
+                                      .replace(/,/g, ".")}
+                                    vnđ`}
                               </span>
                             </div>
                           </div>
@@ -662,10 +740,18 @@ const ShoppingCart = () => {
                             <td className="py-[15px] ">
                               <div className="flex justify-between items-center ">
                                 <span>
-                                  {numeral(priceDiscount)
-                                    .format("0,0")
-                                    .replace(/,/g, ".")}{" "}
-                                  vnđ
+                                  {item.product.variants &&
+                                  item.product.variants.length > 0
+                                    ? `${numeral(priceDiscount)
+                                        .format("0,0")
+                                        .replace(/,/g, ".")} vnđ`
+                                    : `${numeral(
+                                        (item.product?.price *
+                                          (100 - item.product?.discount)) /
+                                          100
+                                      )
+                                        .format("0,0")
+                                        .replace(/,/g, ".")} vnđ`}
                                 </span>
                               </div>
                             </td>
@@ -694,10 +780,21 @@ const ShoppingCart = () => {
                             <td className="py-[15px] ">
                               <div className="flex justify-between ">
                                 <span className="text-primary_green font-semibold">
-                                  {numeral(item.quantity * priceDiscount)
-                                    .format("")
-                                    .replace(/,/g, ".")}{" "}
-                                  vnđ
+                                  {item.product.variants &&
+                                  item.product.variants.length > 0
+                                    ? `${numeral(item.quantity * priceDiscount)
+                                        .format("")
+                                        .replace(/,/g, ".")}
+                                      vnđ`
+                                    : `${numeral(
+                                        (item.quantity *
+                                          (item.product?.price *
+                                            (100 - item.product?.discount))) /
+                                          100
+                                      )
+                                        .format("")
+                                        .replace(/,/g, ".")}
+                                    vnđ`}
                                 </span>
                               </div>
                             </td>
@@ -800,6 +897,14 @@ const ShoppingCart = () => {
         </div>
       )}
       <LoginCart openLogin={openLogin} setOpenLogin={setOpenLogin} />
+      <PopupDeleteCart
+        showPopup={showDeletePopup}
+        closePopup={closePopup}
+        items={items}
+        customer={customer}
+        users={users}
+        productDelete={productDelete}
+      />
     </div>
   );
 };

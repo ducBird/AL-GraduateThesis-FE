@@ -188,7 +188,7 @@ function ProductDetail() {
                   value={parseFloat(averageRating().toFixed(1))}
                 />
               </div>
-              <div className="flex justify-between items-center gap-10 ml-10 lg:text-xl">
+              <div className="flex justify-between items-center gap-5 ml-10 lg:text-lg">
                 {ratingValue.map((value, index) => {
                   return (
                     <button
