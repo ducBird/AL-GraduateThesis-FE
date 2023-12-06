@@ -186,9 +186,11 @@ export default function Header() {
                 >
                   <span className="relative flex item-center justify-center">
                     <RxBell size={24} />
-                    <span className="absolute top-[-5px] end-[-9px] bg-primary_green text-white text-[9px] w-[15px] h-[15px] leading-[15px] text-center font-normal rounded-full z-[1]">
-                      {notificationData?.length}
-                    </span>
+                    {notificationData?.length > 0 && (
+                      <span className="absolute top-[-5px] end-[-9px] bg-primary_green text-white text-[9px] w-[15px] h-[15px] leading-[15px] text-center font-normal rounded-full z-[1]">
+                        {notificationData?.length}
+                      </span>
+                    )}
                   </span>
                 </a>
                 <a
@@ -200,30 +202,39 @@ export default function Header() {
                 >
                   <span className="relative flex item-center justify-center">
                     <AiOutlineHeart size={24} />
-                    <span className="absolute top-[-5px] end-[-9px] bg-primary_green text-white text-[9px] w-[15px] h-[15px] leading-[15px] text-center font-normal rounded-full z-[1]">
-                      {wishlist_items.length}
-                    </span>
+                    {wishlist_items.length > 0 && (
+                      <span className="absolute top-[-5px] end-[-9px] bg-primary_green text-white text-[9px] w-[15px] h-[15px] leading-[15px] text-center font-normal rounded-full z-[1]">
+                        {wishlist_items.length}
+                      </span>
+                    )}
                   </span>
                 </a>
-                <a className="flex justify-center items-center h-[40px] leading-none px-[10px] text-gray-800 cursor-pointer">
+                {/* <a className="flex justify-center items-center h-[40px] leading-none px-[10px] text-gray-800 cursor-pointer">
                   <span className="relative flex item-center justify-center">
                     <IoIosGitCompare size={24} />
                     <span className="absolute top-[-5px] end-[-9px] bg-primary_green text-white text-[9px] w-[15px] h-[15px] leading-[15px] text-center font-normal rounded-full z-[1]">
                       0
                     </span>
                   </span>
-                </a>
+                </a> */}
                 <a
                   className="flex justify-center items-center h-[40px] leading-none px-[10px] text-gray-800 cursor-pointer"
                   onClick={handleCart}
                 >
                   <span className="relative flex item-center justify-center">
                     <RiShoppingCartLine size={24} />
-                    <span className="absolute top-[-5px] end-[-9px] bg-primary_green text-white text-[9px] w-[15px] h-[15px] leading-[15px] text-center font-normal rounded-full z-[1]">
-                      {users?.user && custommer?.customer_cart
-                        ? custommer?.customer_cart.length
-                        : quantityCart}
-                    </span>
+                    {users?.user &&
+                      custommer?.customer_cart &&
+                      custommer?.customer_cart.length > 0 && (
+                        <span className="absolute top-[-5px] end-[-9px] bg-primary_green text-white text-[9px] w-[15px] h-[15px] leading-[15px] text-center font-normal rounded-full z-[1]">
+                          {custommer?.customer_cart.length}
+                        </span>
+                      )}
+                    {items && items.length > 0 && (
+                      <span className="absolute top-[-5px] end-[-9px] bg-primary_green text-white text-[9px] w-[15px] h-[15px] leading-[15px] text-center font-normal rounded-full z-[1]">
+                        {quantityCart}
+                      </span>
+                    )}
                   </span>
                 </a>
               </div>
