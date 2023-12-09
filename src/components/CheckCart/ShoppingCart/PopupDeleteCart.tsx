@@ -4,6 +4,7 @@ import { useCarts } from "../../../hooks/useCart";
 import { IRemoveCartItem } from "../../../interfaces/IRemoveCartItem";
 import { IProduct } from "../../../interfaces/IProducts";
 import { axiosClient } from "../../../libraries/axiosClient";
+import { message } from "antd";
 
 // Thiết lập các style cho modal
 const customStyles = {
@@ -64,12 +65,12 @@ const PopupDeleteCart: React.FC<IModalProps> = ({
         axiosClient
           .delete(`/customers/${customerId}/cart/${productDelete?._id}`)
           .then(() => {
-            window.alert("Xóa sản phẩm ra khỏi giỏ hàng thành công");
+            message.success("Xóa sản phẩm ra khỏi giỏ hàng thành công");
             window.location.reload();
             closePopup();
           })
           .catch((error) => {
-            console.error("Lỗi khi xóa sản phẩm khỏi giỏ hàng", error);
+            message.error("Lỗi khi xóa sản phẩm khỏi giỏ hàng");
           });
       } else {
         console.error("Không tìm thấy sản phẩm trong giỏ hàng");
@@ -80,7 +81,7 @@ const PopupDeleteCart: React.FC<IModalProps> = ({
         product: productDelete as IProduct,
       };
       remove(removeCart);
-      alert("Xóa sản phẩm ra khỏi giỏ hàng thành công");
+      message.success("Xóa sản phẩm ra khỏi giỏ hàng thành công");
       closePopup();
     }
   };

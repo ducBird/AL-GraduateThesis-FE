@@ -1,11 +1,36 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../../hooks/useUser";
 import { axiosClient } from "../../libraries/axiosClient";
+import { useNotification } from "../../hooks/useNotification";
 
 function Notification() {
   const { users } = useUser((state) => state) as any;
+  const { updateUnreadCount } = useNotification((state) => state) as any;
   const [notificationData, setNotificationData] = useState<any>(null);
   const customerId = users.user?._id;
+
+  const handleMarkAllAsRead = () => {
+    // Thay đổi trạng thái của tất cả các thông báo trong notificationData
+    const updatedNotificationData = notificationData.map((item) => ({
+      ...item,
+      isRead: true,
+    }));
+
+    setNotificationData(updatedNotificationData);
+    const dataUpdate = {
+      isRead: true,
+    };
+    // Gọi API hoặc hàm xử lý trên server để cập nhật trạng thái đã đọc
+    axiosClient
+      .patch("/notifications", dataUpdate)
+      .then((response) => {
+        console.log("Đánh dấu đã đọc thành công trên server");
+        updateUnreadCount(); // Cập nhật số lượng chưa đọc thông báo
+      })
+      .catch((error) => {
+        console.log("Đánh dấu đã đọc thất bại trên server");
+      });
+  };
   useEffect(() => {
     if (customerId) {
       const eventSource = new EventSource(
@@ -21,9 +46,17 @@ function Notification() {
           message: "Đơn hàng của bạn đã được xác nhận",
           status: data.status,
           order_details: data.order_details,
+          isRead: false,
         };
 
-        axiosClient.post("/notifications", notificationData);
+        axiosClient
+          .post("/notifications", notificationData)
+          .then((response) => {
+            console.log("thành công");
+          })
+          .catch((error) => {
+            console.log("Thất bại");
+          });
       };
 
       return () => {
@@ -41,6 +74,7 @@ function Notification() {
       setNotificationData(filteredNotifications);
     });
   }, []);
+
   return (
     <div>
       <div className="bg-primary_green lg:h-[75px] lg:p-10 h-auto p-5 text-center lg:mb-0 mb-3">
@@ -48,11 +82,45 @@ function Notification() {
           THÔNG BÁO
         </h3>
       </div>
+      <div className="my-5 text-right mr-[300px]">
+        <button
+          disabled={notificationData?.length === 0}
+          onClick={handleMarkAllAsRead}
+        >
+          Đánh dấu Đã đọc tất cả
+        </button>
+      </div>
       <div className="my-5 mx-[300px] ">
         {notificationData && notificationData.length ? (
           notificationData.map((item, index) => {
+            const dataUpdate = {
+              isRead: true,
+            };
+            const handleNotificationClick = () => {
+              // Thay đổi trạng thái của notificationData trước khi gọi axiosClient.patch
+              const updatedNotificationData = [...notificationData];
+              updatedNotificationData[index].isRead = true;
+              setNotificationData(updatedNotificationData);
+
+              // Gọi axiosClient.patch để cập nhật trạng thái trên server
+              axiosClient
+                .patch("/notifications/" + item?.id, dataUpdate)
+                .then((response) => {
+                  console.log("Cập nhật thành công trên server");
+                  updateUnreadCount(); // Cập nhật số lượng chưa đọc thông báo
+                })
+                .catch((error) => {
+                  console.log("Cập nhật thất bại trên server");
+                });
+            };
             return (
-              <div key={index} className="border">
+              <div
+                key={index}
+                className={`border ${
+                  item.isRead === false ? "bg-gray-100" : ""
+                }`}
+                onClick={handleNotificationClick}
+              >
                 <div className="p-10 flex gap-3 cursor-pointer hover:bg-gray-100">
                   <div className="w-[100px] h-[100px] object-contain">
                     <img
@@ -102,8 +170,8 @@ function Notification() {
             );
           })
         ) : (
-          <div>
-            <p>Không có thông báo nào</p>
+          <div className="text-center">
+            {/* <p className="text-xl font-bold">Không có thông báo nào</p> */}
           </div>
         )}
       </div>

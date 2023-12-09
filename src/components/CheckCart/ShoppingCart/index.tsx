@@ -181,7 +181,7 @@ const ShoppingCart = () => {
         // Kiểm tra xem đã cập nhật tất cả các mục chưa trước khi tái tạo trang
         if (allItemsUpdated) {
           setQuantityChange(false);
-          alert("Cập nhật giỏ hàng thành công");
+          message.success("Cập nhật giỏ hàng thành công");
           window.location.reload();
         } else {
           // Xử lý khi có ít nhất một mục không được cập nhật thành công
@@ -203,7 +203,7 @@ const ShoppingCart = () => {
 
       // Đặt lại state quantityChange về false sau khi đã cập nhật số lượng
       setQuantityChange(false);
-      alert("Cập nhật giỏ hàng thành công");
+      message.success("Cập nhật giỏ hàng thành công");
     }
   };
   useEffect(() => {
@@ -533,7 +533,7 @@ const ShoppingCart = () => {
                           // disabled={!userLogin}
                           onClick={() => {
                             if (!users.user) {
-                              alert("Vui lòng đăng nhập !");
+                              message.error("Vui lòng đăng nhập !");
                               handleLogin();
                             }
                           }}
@@ -857,7 +857,7 @@ const ShoppingCart = () => {
                         className="bg-primary_green py-2 rounded-[20px] text-white hover:opacity-[0.9]"
                         onClick={() => {
                           if (!users?.user) {
-                            alert("Vui lòng đăng nhập !");
+                            message.error("Vui lòng đăng nhập !");
                             handleLogin();
                           }
                         }}

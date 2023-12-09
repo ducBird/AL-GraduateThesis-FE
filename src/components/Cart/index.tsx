@@ -13,6 +13,7 @@ import AquaticLogo from "../../assets/ImageAquaticLand.png";
 import { useUser } from "../../hooks/useUser";
 import { axiosClient } from "../../libraries/axiosClient";
 import { ICustomer } from "../../interfaces/ICustomers";
+import { message } from "antd";
 interface Props {
   openCart: boolean;
   setOpenCart: React.Dispatch<React.SetStateAction<boolean>>;
@@ -137,14 +138,16 @@ const Cart = (props: Props) => {
                               <div className="max-w-[180px] md:max-w-[220px] leading-[25px] ml-5">
                                 <h2 className="font-medium leading-[20px]">
                                   {item.product.name}
-                                  {" - "}
                                   {item?.product?.variants &&
                                   item?.product?.variants.length > 0
-                                    ? item?.variants?.title
+                                    ? " - " + item?.variants?.title
                                     : ""}
                                 </h2>
                                 <p className="text-primary_green text-[13px]">
-                                  4 kho
+                                  {item?.product?.variants.length > 0
+                                    ? item?.variants?.stock
+                                    : item?.product?.stock}{" "}
+                                  trong kho
                                 </p>
                                 <span className="flex items-center">
                                   {item.quantity}
@@ -173,7 +176,7 @@ const Cart = (props: Props) => {
                                       `/customers/${users?.user?._id}/cart/${item?.id}`
                                     )
                                     .then(() => {
-                                      window.alert(
+                                      message.success(
                                         "Xóa sản phẩm ra khỏi giỏ hàng thành công"
                                       );
                                       window.location.reload();
@@ -240,14 +243,17 @@ const Cart = (props: Props) => {
                             <div className="max-w-[180px] md:max-w-[220px] leading-[25px] ml-5">
                               <h2 className="font-medium leading-[20px]">
                                 {item.product.name}
-                                {" - "}
+
                                 {item?.product?.variants &&
                                 item?.product?.variants.length > 0
-                                  ? item?.product?.variants[0]?.title
+                                  ? " - " + item?.product?.variants[0]?.title
                                   : ""}
                               </h2>
                               <p className="text-primary_green text-[13px]">
-                                4 kho
+                                {item?.product?.variants.length > 0
+                                  ? item?.product.variants[0]?.stock
+                                  : item?.product?.stock}{" "}
+                                trong kho
                               </p>
                               <span className="flex items-center">
                                 {item.quantity}
@@ -324,16 +330,18 @@ const Cart = (props: Props) => {
                   <button
                     onClick={() => {
                       if (!users.user) {
-                        alert("Vui lòng đăng nhập");
+                        message.error("Vui lòng đăng nhập");
                         handleLogin();
                       } else if (users.user) {
                         if (customer.customer_cart.length === 0) {
-                          alert("Vui lòng chọn sản phẩm và thêm vào giỏ hàng");
+                          message.error(
+                            "Vui lòng chọn sản phẩm và thêm vào giỏ hàng"
+                          );
                         }
                       } else {
                         if (items.length === 0) {
-                          alert(
-                            "Vui lòng chọn sản phẩm và thêm vào giỏ hàng items"
+                          message.error(
+                            "Vui lòng chọn sản phẩm và thêm vào giỏ hàng"
                           );
                         }
                       }

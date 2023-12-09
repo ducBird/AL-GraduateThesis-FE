@@ -16,7 +16,7 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
     maxWidth: "700px",
     width: "100%",
-    height: "660px",
+    height: "625px",
     padding: "20px",
   },
 };
@@ -95,11 +95,31 @@ const PopupOrderDetail: React.FC<IModalProps> = ({
                   <div className="">
                     <p className="">{order.product?.name}</p>
                     <span>Số lượng: {order.quantity}</span>
+                    <p>
+                      Giá tiền:{" "}
+                      {order.variants
+                        ? `${numeral(
+                            (order.variants?.price *
+                              (100 - order.product.discount)) /
+                              100
+                          )
+                            .format("0,0")
+                            .replace(/,/g, ".")}
+                              vnđ`
+                        : `${numeral(
+                            (order.product?.price *
+                              (100 - order.product.discount)) /
+                              100
+                          )
+                            .format("0,0")
+                            .replace(/,/g, ".")}
+                            vnđ`}
+                    </p>
                   </div>
                 </div>
               );
             })}
-          <div className="text-end font-bold text-lg">
+          <div className="text-end font-bold text-lg pb-2 lg:pb-0">
             <span>Thành tiền: </span>
             <span className="text-red-500">
               {numeral(selectedOrder.total_money_order)

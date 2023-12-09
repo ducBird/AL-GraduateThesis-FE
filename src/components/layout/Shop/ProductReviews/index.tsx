@@ -9,12 +9,15 @@ import orderEmty from "../../../../assets/orderEmty.png";
 import PopupProductViews from "../Popup/PopupProductViews";
 import { IProductReviews } from "../../../../interfaces/IProductReviews";
 import { Link } from "react-router-dom";
+import { message } from "antd";
+import PopupCancelOrder from "../Popup/PopupCancelOrder";
 function ProductRewiews() {
   const [selectedOrderStatus, setSelectedOrderStatus] = useState<string>("ALL");
   const [orders, setOrders] = useState<IOrders[]>([]);
   const [showPopupView, setShowPopupView] = useState<boolean>(false);
   const [showPopupProductView, setShowPopupProductView] =
     useState<boolean>(false);
+  const [showPopupCancel, setShowPopupCancel] = useState<boolean>(false);
   const [selectedOrder, setSelectedOrder] = useState<any>([]);
   const { users } = useUser((state) => state) as any;
   const [productReviews, setProductReviews] = useState<IProductReviews[]>([]);
@@ -47,6 +50,9 @@ function ProductRewiews() {
   };
   const closePopupProductView = () => {
     setShowPopupProductView(false);
+  };
+  const closePopupCancel = () => {
+    setShowPopupCancel(false);
   };
   const findStatusLabel = (statusValue) => {
     const statusObject = ProductReviewMenu.find(
@@ -99,27 +105,32 @@ function ProductRewiews() {
           };
           return (
             <div key={index} className="w-[80%] mx-auto">
-              <div className="mt-10 text-right border p-5 flex justify-end font-bold gap-4">
-                {order?.payment_status === true ? (
-                  <p className="text-primary_green">ĐÃ THANH TOÁN</p>
+              <div className="mt-10 text-[10px] lg:text-lg text-right border p-5 flex justify-end font-bold gap-4">
+                {order?.status === "CANCELLED" ? (
+                  ""
+                ) : order?.payment_status === true ? (
+                  <p className="text-primary_green border-r pr-4">
+                    ĐÃ THANH TOÁN
+                  </p>
                 ) : (
-                  <p className="text-red-500">CHƯA THANH TOÁN</p>
+                  <p className="text-red-500 border-r pr-4">CHƯA THANH TOÁN</p>
                 )}
 
-                <p className={`border-l pl-4 ${statusColors[order?.status]}`}>
+                <p className={`${statusColors[order?.status]}`}>
                   {findStatusLabel(order?.status).toLocaleUpperCase()}
                 </p>
-                {existingReview && existingReview.reviewCount > 0 ? (
-                  <div className="border-l">
-                    <p className="pl-4 text-primary_green">ĐÃ ĐÁNH GIÁ</p>
-                  </div>
-                ) : (
-                  <div className="border-l">
-                    <p className="pl-4 text-red-500">CHƯA ĐÁNH GIÁ</p>
-                  </div>
-                )}
+                {order?.status === "DELIVERED" &&
+                  (existingReview && existingReview.reviewCount > 0 ? (
+                    <div className="border-l">
+                      <p className="pl-4 text-primary_green">ĐÃ ĐÁNH GIÁ</p>
+                    </div>
+                  ) : (
+                    <div className="border-l">
+                      <p className="pl-4 text-red-500">CHƯA ĐÁNH GIÁ</p>
+                    </div>
+                  ))}
               </div>
-              <div className=" border h-autorounded-lg">
+              <div className=" border h-autorounded-lg cursor-pointer">
                 {order.order_details &&
                   order.order_details.map((item, index) => {
                     return (
@@ -169,14 +180,16 @@ function ProductRewiews() {
                   })}
               </div>
               <div className="border h-auto rounded-lg bg-[#fffefb] font-bold pt-5 pr-5 text-right text-xl">
-                <span>Thành tiền: </span>
-                <span className="text-red-500 ">
-                  {numeral(order.total_money_order)
-                    .format("0,0")
-                    .replace(/,/g, ".")}{" "}
-                  vnđ
-                </span>
-                <div className="flex text-[15px] justify-end gap-5 mt-10 mb-5">
+                <div className="text-sm lg:text-xl">
+                  <span>Thành tiền: </span>
+                  <span className="text-red-500 ">
+                    {numeral(order.total_money_order)
+                      .format("0,0")
+                      .replace(/,/g, ".")}{" "}
+                    vnđ
+                  </span>
+                </div>
+                <div className="flex text-sm lg:text-[15px] justify-end gap-5 mt-10 mb-5">
                   <button
                     className="border rounded-lg py-2 px-5"
                     onClick={() => {
@@ -185,28 +198,40 @@ function ProductRewiews() {
                   >
                     Xem chi tiết
                   </button>
-                  <button
-                    className="border rounded-lg py-2 px-5"
-                    onClick={() => {
-                      if (order.status === "DELIVERED") {
+                  {order.status === "WAIT FOR CONFIRMATION" && (
+                    <button
+                      className="border rounded-lg py-2 px-5 bg-red-500 text-white"
+                      onClick={() => {
+                        setShowPopupCancel(true);
+                        setSelectedOrder(order);
+                      }}
+                    >
+                      Hủy đơn hàng
+                    </button>
+                  )}
+                  {order.status === "DELIVERED" && (
+                    <button
+                      className="border rounded-lg py-2 px-5"
+                      onClick={() => {
                         if (
                           existingReview?.reviewCount &&
                           existingReview?.reviewCount === 2
                         ) {
-                          alert("Bạn đã hết lượt đánh giá !!!");
+                          message.error("Bạn đã hết lượt đánh giá !!!");
                         } else {
                           setShowPopupProductView(true);
                           setSelectedOrder(order);
                         }
-                      } else {
-                        alert(
-                          "Chỉ được phép đánh giá khi đơn hàng chưa giao thành công !!!"
-                        );
-                      }
-                    }}
-                  >
-                    Đánh giá
-                  </button>
+                      }}
+                    >
+                      {existingReview?.reviewCount &&
+                      existingReview?.reviewCount === 2 ? (
+                        <p className="text-red-500">Hết lượt đánh giá</p>
+                      ) : (
+                        <p>Đánh giá</p>
+                      )}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -231,6 +256,12 @@ function ProductRewiews() {
         closePopupProductView={closePopupProductView}
         selectedOrder={selectedOrder}
         productReviews={productReviews}
+      />
+      <PopupCancelOrder
+        showPopup={showPopupCancel}
+        closePopupCancel={closePopupCancel}
+        users={users}
+        selectedOrder={selectedOrder}
       />
     </>
   );

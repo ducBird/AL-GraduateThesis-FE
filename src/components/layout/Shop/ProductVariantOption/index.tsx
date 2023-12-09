@@ -94,7 +94,7 @@ function ProductVariantOption({ product }: Iprops) {
     selectedPrice = selectedVariant?.price;
     selectedStock = selectedVariant?.stock;
     if (selectedStock === 0) {
-      alert("hết hàng");
+      message.error("Hết hàng");
     }
     selectedImage = selectedVariant?.variant_image;
   }
@@ -121,7 +121,7 @@ function ProductVariantOption({ product }: Iprops) {
         if (selectedAttributes && selectedVariant) {
           // Kiểm tra stock trước khi thêm vào giỏ hàng
           if (selectedVariant.stock === 0) {
-            alert("Hết hàng");
+            message.error("Hết hàng");
           } else if (users.user) {
             //thực hiện patch vào customer
             const customerId = users.user?._id; // Lấy id của khách hàng đã đăng nhập
@@ -140,11 +140,11 @@ function ProductVariantOption({ product }: Iprops) {
             axiosClient
               .patch(`/customers/${customerId}`, updateData)
               .then((response) => {
-                window.alert("Thêm giỏ hàng thành công");
+                message.success("Thêm giỏ hàng thành công");
                 window.location.reload();
               })
               .catch((error) => {
-                window.alert("Thêm giỏ hàng thất bại");
+                message.error("Thêm giỏ hàng thất bại");
               });
           } else {
             const Cart: CartItems = {
@@ -160,12 +160,14 @@ function ProductVariantOption({ product }: Iprops) {
         }
       } else {
         // Hiển thị thông báo hoặc xử lý khác nếu chưa chọn hết biến thể
-        alert("Vui lòng chọn tất cả các biến thể trước khi thêm vào giỏ hàng.");
+        message.error(
+          "Vui lòng chọn tất cả các biến thể trước khi thêm vào giỏ hàng."
+        );
       }
     } else {
       // Kiểm tra stock trước khi thêm vào giỏ hàng
       if (product?.stock === 0) {
-        alert("Hết hàng");
+        message.error("Hết hàng");
       } else if (users.user) {
         //thực hiện patch vào customer
         const customerId = users.user?._id; // Lấy id của khách hàng đã đăng nhập
@@ -184,11 +186,11 @@ function ProductVariantOption({ product }: Iprops) {
         axiosClient
           .patch(`/customers/${customerId}`, updateData)
           .then((response) => {
-            window.alert("Thêm giỏ hàng thành công");
+            message.success("Thêm giỏ hàng thành công");
             window.location.reload();
           })
           .catch((error) => {
-            window.alert("Thêm giỏ hàng thất bại");
+            message.error("Thêm giỏ hàng thất bại");
           });
       } else {
         const Cart: CartItems = {
@@ -349,7 +351,7 @@ function ProductVariantOption({ product }: Iprops) {
         )}
 
         {/* quantity */}
-        <div className="cart my-4 pb-20 lg:pb-0">
+        <div className="cart my-4 ">
           <div className="quantity flex border border-gray-200 rounded-md w-[120px] h-[42px]">
             <div className="flex flex-none p-1 border-r w-[25px] items-center justify-center">
               <button
@@ -401,7 +403,7 @@ function ProductVariantOption({ product }: Iprops) {
               ""
             )}
           </div>
-          <div className="add-to-cart flex border border-gray-200 rounded-full bg-primary_green w-[150px] h-[42px] mb-14 mt-4 items-center justify-center">
+          <div className="add-to-cart flex border border-gray-200 rounded-full bg-primary_green w-[150px] h-[42px] mb-16 mt-4 items-center justify-center">
             <button
               className="p-3 text-white text-sm hover:font-bold"
               onClick={() => handleAddToBasketClick()}
