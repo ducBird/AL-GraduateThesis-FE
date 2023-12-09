@@ -4,6 +4,7 @@ import React from "react";
 import { ICustomer } from "../../../interfaces/ICustomers";
 import { axiosClient } from "../../../libraries/axiosClient";
 import { useUser } from "../../../hooks/useUser";
+import { API_URL } from "../../../constants/URLS";
 const Register = () => {
   const [isLogin, setIsLogin] = React.useState(true);
   const handleForm = () => {
@@ -46,6 +47,9 @@ const Register = () => {
   };
   const onLoginFinishFailed = (err) => {
     console.log("Login Failed:", err);
+  };
+  const googleLogin = () => {
+    window.open("http://localhost:9000/customers/auth/google", "_self");
   };
   return (
     <>
@@ -161,10 +165,13 @@ const Register = () => {
                     </button>
                   </Form.Item>
 
-                  <div className=" flex justify-around cursor-pointer items-center w-[100%] rounded-[20px] py-2 bg-orange-700 text-[20px] text-white font-semibold hover:opacity-[0.7]">
-                    Đăng ký với Google
+                  <button
+                    onClick={googleLogin}
+                    className=" flex justify-around cursor-pointer items-center w-[100%] rounded-[20px] py-2 bg-orange-700 text-[20px] text-white font-semibold hover:opacity-[0.7]"
+                  >
+                    Đăng nhập với Google
                     <FaGoogle />
-                  </div>
+                  </button>
                 </Form>
               </div>
             ) : (

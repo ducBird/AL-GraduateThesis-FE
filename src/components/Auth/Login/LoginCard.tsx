@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MdOutlineClose } from "react-icons/md";
 import { AiOutlineUser } from "react-icons/ai";
 import { Form, Input, Button, message } from "antd";
@@ -7,11 +7,13 @@ import { ICustomer } from "../../../interfaces/ICustomers";
 import { axiosClient } from "../../../libraries/axiosClient";
 import { useUser } from "../../../hooks/useUser";
 import { useCarts } from "../../../hooks/useCart";
+import { FaGoogle } from "react-icons/fa";
 interface Props {
   openLogin: boolean;
   setOpenLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const LoginCart = (props: Props) => {
+  const navigate = useNavigate();
   const { openLogin, setOpenLogin } = props;
   const [loginForm] = Form.useForm();
   const { addUser } = useUser((state) => state) as any;
@@ -47,12 +49,16 @@ const LoginCart = (props: Props) => {
 
         //chuyển hướng về trang chính (home)
         setTimeout(() => {
-          window.location.href = "/";
+          // Code React thì hạn chế cho trình duyệt load lại bằng cách dùng window.location.href
+          // window.location.href = "/";
+          // mà hãy dùng useNavigation
+          navigate("/history-order-user");
+          setOpenLogin(false);
           window.localStorage.removeItem("cart-storage");
         }, 1000);
       })
       .catch((err) => {
-        message.error("lỗi", err.response?.data.msg);
+        message.error(err.response?.data.msg);
       });
   };
   const onLoginFinishFailed = (err) => {
@@ -69,6 +75,10 @@ const LoginCart = (props: Props) => {
   //   // });
   //   // console.log(res.data);
   // };
+  const googleLogin = () => {
+    window.open("http://localhost:9000/customers/auth/google", "_self");
+  };
+
   return (
     <div>
       <div
@@ -141,6 +151,13 @@ const LoginCart = (props: Props) => {
                 type="submit"
               >
                 Đăng nhập
+              </button>
+              <button
+                onClick={googleLogin}
+                className=" flex justify-around cursor-pointer items-center w-[100%] rounded-[20px] py-2 bg-orange-700 text-[20px] text-white font-semibold hover:opacity-[0.7]"
+              >
+                Đăng nhập với Google
+                <FaGoogle />
               </button>
             </Form.Item>
             <Form.Item>

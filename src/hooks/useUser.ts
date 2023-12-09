@@ -21,6 +21,20 @@ export const useUser = create(
           type: "addUser",
         });
       },
+      updateUserAvatar: (url: string) => {
+        const users = get().users;
+        users.user.avatar = url;
+        return set(() => ({ users: users }), false, {
+          type: "updateUserAvatar",
+        });
+      },
+      updateUserProfile: (customer: ICustomer) => {
+        const users = get().users;
+        Object.assign(users.user, customer);
+        return set(() => ({ users: users }), false, {
+          type: "updateProfileUser",
+        });
+      },
       updateUser: (customer: ICustomer) => {
         const users = { ...get().users }; // Tạo một bản sao của đối tượng users
         const found = users?.user; // Truy cập trường user từ đối tượng users

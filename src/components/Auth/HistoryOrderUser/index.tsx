@@ -3,15 +3,21 @@ import userImage from "../../../assets/user.png";
 import { axiosClient } from "../../../libraries/axiosClient";
 import { IOrders } from "../../../interfaces/IOrders";
 import numeral from "numeral";
-import { Button, Form, Input, Select, message } from "antd";
+import { Button, Form, Input, Select, Upload, message } from "antd";
 import axios from "axios";
 import { useFormik } from "formik";
 import { useUser } from "../../../hooks/useUser";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { UpCircleFilled } from "@ant-design/icons";
+import { RcFile } from "antd/es/upload";
+import { API_URL } from "../../../constants/URLS";
 function HistoryOrderUser() {
   // const userString = localStorage.getItem("user-storage");
   // const user = userString ? JSON.parse(userString) : null;
-  const { users, updateUser } = useUser((state) => state);
+  const navigate = useNavigate();
+  const { users, updateUserAvatar, updateUserProfile } = useUser(
+    (state) => state
+  );
   const [historyOrderUser, setHistoryOrderUser] = useState<Array<IOrders>>([]);
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -100,13 +106,33 @@ function HistoryOrderUser() {
     option?: { label: string; value: string }
   ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
+  // Upload ảnh đại diện (kiểm tra định dạng PNG/JPG của file upload)
+  const beforeUpload = (file: RcFile) => {
+    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+    if (!isJpgOrPng) {
+      message.error("Bạn chỉ có thể chọn file JPG/PNG!");
+    }
+    return isJpgOrPng;
+  };
+
   const updatedProfile = (values) => {
     const newField = `${values.detail_address}, ${selectedWard}, ${selectedDistrict}, ${selectedProvince}`;
     const newValues = { ...values, address: newField };
+    let valueUpdated = {};
+    if (
+      !values.detail_address ||
+      !selectedWard ||
+      !selectedDistrict ||
+      !selectedProvince
+    ) {
+      valueUpdated = { ...values };
+    } else {
+      valueUpdated = newValues;
+    }
     axiosClient
       .patch(
         "/customers/" + users.user._id,
-        newValues
+        valueUpdated
         // {
         //   headers: {
         //     access_token: `Bearer ${window.localStorage.getItem("access_token")}`,
@@ -115,8 +141,7 @@ function HistoryOrderUser() {
       )
       .then((response) => {
         message.success("Cập nhật thành công!");
-        updateUser(response.data);
-        // console.log(response.data);
+        updateUserProfile(response.data);
       })
       .catch((err) => {
         message.error("Cập nhật thất bại!");
@@ -151,13 +176,47 @@ function HistoryOrderUser() {
               onFinishFailed={updatedFailed}
               initialValues={initialCustomerValues}
             >
-              <div className="w-full flex items-center justify-center mb-3">
-                <img
-                  src={userImage}
-                  alt="image"
-                  className="w-[150px] h-[150px] flex "
-                />
-              </div>
+              <Upload
+                showUploadList={false}
+                name="file"
+                // headers={{ authorization: "authorization-text" }}
+                // action={`http://localhost:9000/upload/customers/${users?.user?._id}`}
+                customRequest={({ file }) => {
+                  const formData = new FormData();
+                  formData.append("file", file);
+                  axios
+                    .post(
+                      `${API_URL}/upload/customers/${users.user._id}`,
+                      formData
+                    )
+                    .then((response) => {
+                      if (response.statusText === "OK") {
+                        updateUserAvatar(response.data.url);
+                        message.success(
+                          `Ảnh đại diện ${file.name} đã được thay đổi`
+                        );
+                      } else {
+                        message.error(
+                          `Không thể tải ảnh đại diện ${file.name}.`
+                        );
+                      }
+                    })
+                    .catch((err) => {
+                      message.error("Tải lên hình ảnh thất bại!");
+                      message.error(err.response.data);
+                      console.log(err);
+                    });
+                }}
+                beforeUpload={beforeUpload}
+              >
+                <div className="w-[150px] h-[150px] mx-auto flex items-center justify-center mb-7 hover:bg-slate-100 hover:rounded-full hover:opacity-80">
+                  <img
+                    src={users.user.avatar}
+                    alt="image"
+                    className="w-[100%] h-[100%] rounded-full"
+                  />
+                </div>
+              </Upload>
               <Form.Item hasFeedback label="Họ - Tên đệm" name="first_name">
                 <Input />
               </Form.Item>
@@ -303,7 +362,8 @@ function HistoryOrderUser() {
                 <Button
                   className="bg-primary_green text-white"
                   onClick={() => {
-                    window.location.href = "/product-rewiews";
+                    // window.location.href = "/product-rewiews";
+                    navigate("/product-rewiews");
                   }}
                 >
                   Đơn mua

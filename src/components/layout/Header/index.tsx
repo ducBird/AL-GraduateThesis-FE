@@ -174,7 +174,17 @@ export default function Header() {
                   className="flex justify-center items-center h-[40px] leading-none px-[10px] text-gray-800 cursor-pointer"
                 >
                   <span className="relative flex item-center justify-center">
-                    <RxPerson size={24} />
+                    {users.user ? (
+                      <div className="w-[24px] h-[24px]">
+                        <img
+                          src={users.user.avatar}
+                          alt="avatar"
+                          className="w-[100%] h-[100%] rounded-full"
+                        />
+                      </div>
+                    ) : (
+                      <RxPerson size={24} />
+                    )}
                   </span>
                 </a>
                 <a
