@@ -6,6 +6,7 @@ import { PayPalButton } from "react-paypal-button-v2";
 import Vouchers from "../../../Vouchers";
 import { IVouchers } from "../../../../interfaces/IVouchers";
 import { ICustomer } from "../../../../interfaces/ICustomers";
+import { message } from "antd";
 type Props = {
   totalOrder: number;
   paymentMethod: string;
@@ -88,6 +89,24 @@ function CheckOutCard({
     onTotalChange(total);
   }, [total, onTotalChange]);
 
+  const groupedItems = [];
+  if (customer.customer_cart) {
+    customer.customer_cart.forEach((item) => {
+      const existingItem = groupedItems.find(
+        (groupedItem) =>
+          groupedItem.product_id === item.product_id &&
+          groupedItem.variants_id === item.variants_id
+      );
+
+      if (existingItem) {
+        // If the item already exists in the groupedItems, update its quantity
+        existingItem.quantity += item.quantity;
+      } else {
+        // If the item doesn't exist, add it to the groupedItems array
+        groupedItems.push({ ...item });
+      }
+    });
+  }
   return (
     <>
       <h1 className="text-center py-4 text-[22px] font-bold">
@@ -102,8 +121,8 @@ function CheckOutCard({
             </tr>
           </thead>
           <tbody>
-            {customer.customer_cart && customer.customer_cart.length > 0 ? (
-              customer.customer_cart.map((item: any, index) => {
+            {groupedItems && groupedItems.length > 0 ? (
+              groupedItems.map((item: any, index) => {
                 const priceDiscount =
                   (item.variants?.price * (100 - item.product?.discount)) / 100;
                 return (
@@ -122,15 +141,18 @@ function CheckOutCard({
                       <div className="ml-2 flex flex-col gap-2">
                         <h2 className="font-medium leading-[20px]">
                           {item.product?.name}
-                          {" - "}
+
                           {item?.product?.variants &&
                           item?.product?.variants.length > 0
-                            ? item?.variants?.title
+                            ? " - " + item?.variants?.title
                             : ""}
                         </h2>
                         <div className="leading-[15px] flex flex-col gap-2">
                           <p className="text-primary_green text-[13px] ">
-                            4 trong kho
+                            {item?.product?.variants.length > 0
+                              ? item?.variants?.stock
+                              : item?.product?.stock}{" "}
+                            trong kho
                           </p>
                           <span className="text-[12px] flex items-center">
                             <AiOutlineClose />
@@ -263,7 +285,7 @@ function CheckOutCard({
                 onTotalChange(total);
               }}
               onError={(error) => {
-                alert("Error");
+                message.error("Lỗi");
                 console.log("error", error);
               }}
             />

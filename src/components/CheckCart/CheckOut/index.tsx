@@ -7,6 +7,7 @@ import CheckOutCard from "./CheckOutCard";
 import { IAccumulated } from "../../../interfaces/Accumulated";
 import { ICustomer } from "../../../interfaces/ICustomers";
 import PopupVnpayReturnUrl from "./PopupVnpayReturnUrl";
+import { message } from "antd";
 interface IOrderDetails {
   product_id: string;
   variants_id: string;
@@ -143,10 +144,10 @@ const CheckOut = () => {
           });
           window.localStorage.removeItem("cart-storage");
           window.location.replace("/shop");
-          window.alert("Đặt hàng thành công");
+          alert("Đặt hàng thành công");
         })
         .catch(() => {
-          window.alert("Đặt hàng thất bại");
+          alert("Đặt hàng thất bại");
         });
     },
   });
@@ -230,7 +231,7 @@ const CheckOut = () => {
       }
       // Send the order data to the server
       await axiosClient.post("/orders", orderData);
-      window.alert("Đặt hàng với thanh toán paypal thành công");
+      alert("Đặt hàng với thanh toán paypal thành công");
       // Sau một khoảng thời gian, chuyển hướng đến "/shop"
       setTimeout(() => {
         window.localStorage.removeItem("cart-storage");
@@ -238,7 +239,7 @@ const CheckOut = () => {
       }, 4000);
     } catch (error) {
       console.error(error);
-      window.alert("Đặt hàng với thanh toán paypal thất bại");
+      alert("Đặt hàng với thanh toán paypal thất bại");
     }
     // OPTIONAL: Call your server to save the transaction
     return fetch("/paypal-transaction-complete", {
@@ -416,7 +417,7 @@ const CheckOut = () => {
           updateUser({ points: newPoints });
         }
         await axiosClient.post("/orders", orderData);
-        window.alert("Đặt hàng với thanh toán vnpay thành công");
+        alert("Đặt hàng với thanh toán vnpay thành công");
         // Sau một khoảng thời gian, chuyển hướng đến "/shop"
         setTimeout(() => {
           window.location.replace("/shop");
@@ -426,7 +427,7 @@ const CheckOut = () => {
         }, 10000);
       } catch (error) {
         console.error(error);
-        window.alert("Đặt hàng với thanh toán vnpay thất bại");
+        alert("Đặt hàng với thanh toán vnpay thất bại");
       }
     } else {
       alert("Thanh toán thất bại, hủy thanh toán !!!");
@@ -497,7 +498,7 @@ const CheckOut = () => {
           updateUser({ points: newPoints });
         }
         await axiosClient.post("/orders", orderData);
-        window.alert("Đặt hàng với thanh toán momo thành công");
+        alert("Đặt hàng với thanh toán momo thành công");
         // Sau một khoảng thời gian, chuyển hướng đến "/shop"
         setTimeout(() => {
           window.location.replace("/shop");
@@ -506,7 +507,7 @@ const CheckOut = () => {
         }, 1000);
       } catch (error) {
         console.error(error);
-        window.alert("Đặt hàng với thanh toán momo thất bại");
+        alert("Đặt hàng với thanh toán momo thất bại");
       }
     } else {
       alert("Thanh toán thất bại, hủy thanh toán !!!");

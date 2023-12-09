@@ -20,7 +20,7 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
     maxWidth: "700px",
     width: "100%",
-    height: "650px",
+    height: "625px",
     padding: "20px",
   },
 };

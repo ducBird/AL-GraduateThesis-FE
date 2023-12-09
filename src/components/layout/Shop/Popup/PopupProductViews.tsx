@@ -1,7 +1,7 @@
 import ReactModal from "react-modal";
 import { MdOutlineClose } from "react-icons/md";
 import { useEffect, useState } from "react";
-import { Button, Rate, Upload } from "antd";
+import { Button, Rate, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { axiosClient } from "../../../../libraries/axiosClient";
 
@@ -18,7 +18,7 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
     maxWidth: "700px",
     width: "100%",
-    height: "650px",
+    height: "625px",
     padding: "20px",
   },
 };
@@ -37,7 +37,8 @@ const PopupProductViews: React.FC<IModalProps> = ({
   const desc = ["Rất tệ", "Tệ", "Bình thường", "Tốt", "Rất tốt"];
   // Biến state để lưu giữ số sao đánh giá cho từng sản phẩm
   const [ratings, setRatings] = useState<number[]>([]);
-
+  // biến state để theo dõi người dùng đã chọn hết đánh giá cho tất cả sản phẩm chưa
+  const [allProductsReviewed, setAllProductsReviewed] = useState(false);
   const [inputValues, setInputValues] = useState<{ [key: number]: string }>({});
   // File
   const [file, setFile] = useState<any>();
@@ -45,29 +46,45 @@ const PopupProductViews: React.FC<IModalProps> = ({
   const existingReview = productReviews?.find(
     (review) => review?.order_id === selectedOrder?._id
   );
+  const checkAllProductsReviewed = () => {
+    const isAllReviewed =
+      ratings.length === selectedOrder.order_details.length - 1;
+    console.log(isAllReviewed);
+    setAllProductsReviewed(isAllReviewed);
+  };
   const handleCompleteReview = async () => {
     try {
+      checkAllProductsReviewed();
       // Tạo mảng đánh giá từ state ratings
       if (existingReview === undefined) {
-        // Nếu không có đánh giá, thực hiện POST
-        const today = new Date(); // Tạo đối tượng Date cho ngày hôm nay
-        const formattedDate = today.toISOString(); // Chuyển đổi thành định dạng chuỗi
-        const reviews = selectedOrder.order_details.map((order, index) => ({
-          product_id: order.product._id,
-          rating: ratings[index],
-          comment: inputValues[index] || "",
-          date: formattedDate,
-        }));
+        if (!allProductsReviewed) {
+          message.error(
+            "Vui lòng chọn số sao cho tất cả các sản phẩm đánh giá"
+          );
+        } else {
+          // Nếu không có đánh giá, thực hiện POST
+          const today = new Date(); // Tạo đối tượng Date cho ngày hôm nay
+          const formattedDate = today.toISOString(); // Chuyển đổi thành định dạng chuỗi
+          const reviews = selectedOrder.order_details.map((order, index) => ({
+            product_id: order.product._id,
+            rating: ratings[index],
+            comment: inputValues[index] || "",
+            date: formattedDate,
+          }));
 
-        const reviewData = {
-          customer_id: selectedOrder.customer_id,
-          order_id: selectedOrder._id,
-          reviews: reviews,
-          reviewCount: 1,
-        };
+          const reviewData = {
+            customer_id: selectedOrder.customer_id,
+            order_id: selectedOrder._id,
+            reviews: reviews,
+            reviewCount: 1,
+          };
 
-        await axiosClient.post("/product-review", reviewData);
-        window.alert("Đánh giá thành công");
+          await axiosClient.post("/product-review", reviewData);
+          message.success("Đánh giá thành công");
+          // Đóng popup sau khi hoàn thành đánh giá
+          closePopupProductView();
+          window.location.reload();
+        }
       } else {
         // Nếu đã có đánh giá, thực hiện PATCH
         const updateDate = new Date(); // Tạo đối tượng Date cho ngày hôm nay
@@ -90,15 +107,15 @@ const PopupProductViews: React.FC<IModalProps> = ({
           `/product-review/${existingReview._id}`,
           reviewData
         );
-        window.alert("Cập nhật đánh giá thành công");
+        message.success("Cập nhật đánh giá thành công");
+        // Đóng popup sau khi hoàn thành đánh giá
+        closePopupProductView();
+        window.location.reload();
       }
-      // Đóng popup sau khi hoàn thành đánh giá
-      closePopupProductView();
-      window.location.reload();
     } catch (error) {
       // Xử lý lỗi
       console.error("Lỗi khi gửi đánh giá:", error);
-      window.alert("Đánh giá thất bại");
+      message.error("Đánh giá thất bại");
     }
   };
   useEffect(() => {
@@ -172,6 +189,7 @@ const PopupProductViews: React.FC<IModalProps> = ({
                           const newRatings = [...ratings];
                           newRatings[index] = value;
                           setRatings(newRatings);
+                          checkAllProductsReviewed();
                         }}
                         value={currentRating}
                       />
@@ -216,7 +234,7 @@ const PopupProductViews: React.FC<IModalProps> = ({
               );
             })}
           {/* Các nút thực hiện đánh giá */}
-          <div className="text-right mb-5">
+          <div className="text-right lg:pb-0 pb-2">
             <button
               className="border py-2 px-5 mr-5 rounded-lg bg-blue-500 text-white"
               onClick={closePopupProductView}

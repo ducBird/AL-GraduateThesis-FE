@@ -12,6 +12,7 @@ import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import numeral from "numeral";
 import { IProduct } from "../../../../interfaces/IProducts";
+import { message } from "antd";
 interface ICategories {
   _id: string;
   name: string;
@@ -135,7 +136,9 @@ function SideBar({
       navigate(`/search-products?name=${formattedValue}`);
       setSearchProducts([]);
     } else {
-      alert("Vui lòng nhập thông tin vào ô tìm kiếm để có thể tìm kiếm");
+      message.error(
+        "Vui lòng nhập thông tin vào ô tìm kiếm để có thể tìm kiếm"
+      );
     }
   };
 

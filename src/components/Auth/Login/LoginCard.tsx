@@ -45,7 +45,9 @@ const LoginCart = (props: Props) => {
         };
         // Gửi yêu cầu PATCH đến máy chủ để cập nhật thông tin giỏ hàng của khách hàng
         console.log("data", updateData);
-        axiosClient.patch(`/customers/${customerId}`, updateData);
+        axiosClient.patch(`/customers/${customerId}`, updateData).then(() => {
+          window.localStorage.removeItem("cart-storage");
+        });
 
         //chuyển hướng về trang chính (home)
         setTimeout(() => {
