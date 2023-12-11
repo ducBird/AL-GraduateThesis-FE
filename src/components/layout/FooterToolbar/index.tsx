@@ -47,7 +47,7 @@ const FooterTool = () => {
               <div
                 onClick={() => {
                   if (access_token) {
-                    navigate("/history-order-user");
+                    navigate("/user-profile");
                     window.scrollTo(0, 0);
                   } else {
                     handleLogin();
