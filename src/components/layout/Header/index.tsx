@@ -30,7 +30,6 @@ export default function Header() {
   3;
   const [isMobile, setIsMobile] = useState(false);
   const [showPopupSearch, setShowPopupSearch] = useState(false);
-  const [custommer, setCustomer] = useState<ICustomer[]>([]);
   // zustand
   const { items } = useCarts((state) => state) as any;
   const { users } = useUser((state) => state) as any;
@@ -41,6 +40,13 @@ export default function Header() {
     const cartItem = item as { quantity: number };
     return total + cartItem.quantity;
   }, 0);
+  const quantityUserCart =
+    users?.user &&
+    users?.user?.customer_cart.reduce((total, item) => {
+      // cast biến item sang kiểu dữ liệu number
+      const cartItem = item as { quantity: number };
+      return total + cartItem.quantity;
+    }, 0);
   const { unreadNotificationCount } = useNotification() as any;
   const handleMenu = () => {
     setOpenMenu(true);
@@ -83,15 +89,6 @@ export default function Header() {
     // console.log(windowSize);
   }, [windowSize]);
 
-  useEffect(() => {
-    axiosClient.get("/customers").then((response) => {
-      response.data.find((item) => {
-        if (item?._id === users.user?._id) {
-          setCustomer(item);
-        }
-      });
-    });
-  }, [users.user?._id]);
   useEffect(() => {
     axiosClient.get("/notifications").then((response) => {
       // Lọc dữ liệu để chỉ giữ lại các thông báo của customerId
@@ -149,12 +146,11 @@ export default function Header() {
                   <span>
                     <RiShoppingCartLine size={20} />
                   </span>
-                  {users?.user &&
-                    custommer?.customer_cart &&
-                    custommer?.customer_cart.length > 0 && (
+                  {users?.user?.customer_cart &&
+                    users?.user?.customer_cart.length > 0 && (
                       <span className="bg-primary_green w-5 h-5 rounded-full flex items-center justify-center ms-[6px]">
                         <span className="text-[10px] leading-3 font-bold text-white">
-                          {custommer?.customer_cart.length}
+                          {quantityUserCart}
                         </span>
                       </span>
                     )}
@@ -249,10 +245,10 @@ export default function Header() {
                   <span className="relative flex item-center justify-center">
                     <RiShoppingCartLine size={24} />
                     {users?.user &&
-                      custommer?.customer_cart &&
-                      custommer?.customer_cart.length > 0 && (
+                      users?.user?.customer_cart &&
+                      users?.user?.customer_cart.length > 0 && (
                         <span className="absolute top-[-5px] end-[-9px] bg-primary_green text-white text-[9px] w-[15px] h-[15px] leading-[15px] text-center font-normal rounded-full z-[1]">
-                          {custommer?.customer_cart.length}
+                          {quantityUserCart}
                         </span>
                       )}
                     {items && items.length > 0 && (

@@ -12,7 +12,7 @@ interface Iprops {
 }
 
 function ProductVariantOption({ product }: Iprops) {
-  const { users } = useUser((state) => state) as any;
+  const { users, updateUserCart } = useUser((state) => state) as any;
   const { add } = useCarts((state) => state) as any;
 
   const [quantity, setQuantity] = useState<string>("1");
@@ -140,8 +140,8 @@ function ProductVariantOption({ product }: Iprops) {
             axiosClient
               .patch(`/customers/${customerId}`, updateData)
               .then((response) => {
+                updateUserCart(response.data.customer_cart);
                 message.success("Thêm giỏ hàng thành công");
-                window.location.reload();
               })
               .catch((error) => {
                 message.error("Thêm giỏ hàng thất bại");
@@ -186,8 +186,8 @@ function ProductVariantOption({ product }: Iprops) {
         axiosClient
           .patch(`/customers/${customerId}`, updateData)
           .then((response) => {
+            updateUserCart(response.data.customer_cart);
             message.success("Thêm giỏ hàng thành công");
-            window.location.reload();
           })
           .catch((error) => {
             message.error("Thêm giỏ hàng thất bại");

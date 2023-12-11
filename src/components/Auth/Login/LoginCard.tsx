@@ -54,7 +54,7 @@ const LoginCart = (props: Props) => {
           // Code React thì hạn chế cho trình duyệt load lại bằng cách dùng window.location.href
           // window.location.href = "/";
           // mà hãy dùng useNavigation
-          navigate("/history-order-user");
+          // navigate("/user-profile");
           setOpenLogin(false);
           window.localStorage.removeItem("cart-storage");
         }, 1000);

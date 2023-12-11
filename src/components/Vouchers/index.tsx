@@ -42,7 +42,6 @@ const Vouchers: React.FC<IModalProps> = ({
   // Ngày hiện tại
   const today = dayjs();
   const dateFormat = "YYYY-MM-DD";
-  console.log("today", today.format(dateFormat));
   const [selectedVoucher, setSelectedVoucher] = useState<IVouchers | null>(
     null
   );
@@ -94,7 +93,6 @@ const Vouchers: React.FC<IModalProps> = ({
           >
             {vouchers &&
               vouchers.map((voucher, index) => {
-                console.log(voucher.startDate);
                 return (
                   <div key={index}>
                     <div>

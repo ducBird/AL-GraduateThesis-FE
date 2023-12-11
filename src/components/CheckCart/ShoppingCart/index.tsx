@@ -17,7 +17,7 @@ import { message } from "antd";
 const ShoppingCart = () => {
   // zustand
   const { items, remove, updateQuantity } = useCarts((state) => state) as any;
-  const { users } = useUser((state) => state) as any;
+  const { users, removeCartItem } = useUser((state) => state) as any;
   const [openLogin, setOpenLogin] = useState(false);
   const [customer, setCustomer] = useState<ICustomer[]>([]);
   // Tạo state quantity cho từng sản phẩm
@@ -33,8 +33,8 @@ const ShoppingCart = () => {
   // tính tổng giỏ hàng
   let totalOrder = 0;
 
-  if (customer.customer_cart && customer.customer_cart.length > 0) {
-    totalOrder = customer.customer_cart.reduce((total, item) => {
+  if (users?.user?.customer_cart && users?.user?.customer_cart.length > 0) {
+    totalOrder = users?.user?.customer_cart.reduce((total, item) => {
       const variantsPrice = item.variants?.price || item.product?.price || 0;
 
       const priceDiscount =
@@ -56,8 +56,8 @@ const ShoppingCart = () => {
 
   // dùng để group lại những sản phẩm trùng nhau và cộng dồn quantity lại với nhau
   const groupedItems: any = [];
-  if (customer.customer_cart) {
-    customer.customer_cart.forEach((item) => {
+  if (users?.user?.customer_cart) {
+    users?.user?.customer_cart.forEach((item) => {
       const existingItem = groupedItems.find(
         (groupedItem) =>
           groupedItem.product_id === item.product_id &&
@@ -82,7 +82,7 @@ const ShoppingCart = () => {
     const currentQuantity = updatedQuantities[index];
     if (currentQuantity === 1) {
       const productToDelete = users.user
-        ? customer.customer_cart[index]
+        ? users?.user?.customer_cart[index]
         : items[index]?.product;
       setProductDelete(productToDelete);
       setShowDeletePopup(true);
@@ -229,15 +229,15 @@ const ShoppingCart = () => {
     // Nếu có người dùng và giỏ hàng của khách hàng có thông tin
     if (
       users?.user &&
-      customer.customer_cart &&
-      customer.customer_cart.length > 0
+      users?.user?.customer_cart &&
+      users?.user?.customer_cart.length > 0
     ) {
-      setQuantities(customer.customer_cart.map((item) => item.quantity));
+      setQuantities(users?.user?.customer_cart.map((item) => item.quantity));
     } else {
       // Nếu không có người dùng hoặc giỏ hàng của khách hàng không có thông tin
       setQuantities(items.map((item) => item.quantity));
     }
-  }, [users?.user, customer.customer_cart, items]);
+  }, [users?.user, users?.user?.customer_cart, items]);
   return (
     <div className="lg:h-[685px]">
       <div className="w-full bg-primary_green lg:h-[75px] lg:p-10 h-auto p-5 text-center">
@@ -247,7 +247,7 @@ const ShoppingCart = () => {
       </div>
       {/* Kiểm tra có user và có customer variants không */}
       {users?.user ? (
-        customer.customer_cart && customer.customer_cart.length > 0 ? (
+        users?.user?.customer_cart && users?.user?.customer_cart.length > 0 ? (
           <div className="container h-[100%]">
             <div className="px-3 md:grid md:grid-cols-12 ">
               <div className=" md:col-span-8 md:mr-4">
@@ -347,7 +347,26 @@ const ShoppingCart = () => {
                                 </span>
                               </div>
                             </div>
-                            <button className="cursor-pointer text-[20px] ml-8 h-2">
+                            <button
+                              className="cursor-pointer text-[20px] ml-8 h-2"
+                              onClick={() => {
+                                axiosClient
+                                  .delete(
+                                    `/customers/${users?.user?._id}/cart/${item?.product_id}/${item?.variants_id}`
+                                  )
+                                  .then(() => {
+                                    removeCartItem(
+                                      item.product_id,
+                                      item.variants_id
+                                    );
+                                    message.success(
+                                      "Xóa sản phẩm ra khỏi giỏ hàng thành công"
+                                    );
+
+                                    // window.location.reload();
+                                  });
+                              }}
+                            >
                               <AiOutlineClose />
                             </button>
                           </div>
@@ -372,6 +391,8 @@ const ShoppingCart = () => {
                     <tbody>
                       {groupedItems &&
                         groupedItems.map((item, index) => {
+                          console.log(item);
+
                           const priceDiscount =
                             (item.variants?.price *
                               (100 - item.product?.discount)) /
@@ -381,7 +402,23 @@ const ShoppingCart = () => {
                               <td className="py-[15px] ">
                                 <button
                                   className="cursor-pointer"
-                                  // onClick={() => remove(removeCart)}
+                                  onClick={() => {
+                                    axiosClient
+                                      .delete(
+                                        `/customers/${users?.user?._id}/cart/${item?.product_id}/${item?.variants_id}`
+                                      )
+                                      .then(() => {
+                                        removeCartItem(
+                                          item.product_id,
+                                          item.variants_id
+                                        );
+                                        message.success(
+                                          "Xóa sản phẩm ra khỏi giỏ hàng thành công"
+                                        );
+
+                                        // window.location.reload();
+                                      });
+                                  }}
                                 >
                                   <AiOutlineClose />
                                 </button>
@@ -591,7 +628,6 @@ const ShoppingCart = () => {
                         : product?.price;
                     const priceDiscount =
                       (price * (100 - product?.discount)) / 100;
-                    console.log(priceDiscount);
                     return (
                       <li className="border-b" key={index}>
                         <div className="flex py-3 px-2">
@@ -900,7 +936,6 @@ const ShoppingCart = () => {
       <PopupDeleteCart
         showPopup={showDeletePopup}
         closePopup={closePopup}
-        items={items}
         customer={customer}
         users={users}
         productDelete={productDelete}
