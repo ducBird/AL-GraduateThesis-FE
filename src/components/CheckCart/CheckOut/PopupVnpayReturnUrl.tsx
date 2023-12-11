@@ -12,14 +12,14 @@ const customStyles = {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   content: {
-    top: "52%",
+    top: "54%",
     left: "50%",
     right: "auto",
     bottom: "auto",
     transform: "translate(-50%, -50%)",
     maxWidth: "700px",
     width: "100%",
-    height: "700px",
+    height: "600px",
     padding: "20px",
   },
 };

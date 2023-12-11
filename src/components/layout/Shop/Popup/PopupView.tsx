@@ -62,20 +62,20 @@ const PopupView: React.FC<IModalProps> = ({
           <div className="flex-1 font-semibold cursor-pointer text-sm mt-5">
             {/* <p className="p-2">{product?.name}</p> */}
             <ProductVariantOption product={product} />
+            <div className="lg:pb-10 pb-[100px]">
+              <span className="text-xl font-bold">Mô tả: </span>
+              <span className="text-xl text-primary_green">
+                {product?.description}
+              </span>
+            </div>
           </div>
         </div>
         <button
           onClick={closePopup}
-          className="absolute text-3xl top-4 right-4 text-red-500"
+          className="absolute text-3xl top-10 lg:top-4 right-4 text-red-500"
         >
           <MdOutlineClose />
         </button>
-        <div>
-          <span className="text-xl font-bold">Mô tả: </span>
-          <span className="text-xl text-primary_green">
-            {product?.description}
-          </span>
-        </div>
       </ReactModal>
     </div>
   );

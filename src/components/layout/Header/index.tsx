@@ -17,7 +17,8 @@ import SearchPopup from "./Search/index";
 import { ICustomer } from "../../../interfaces/ICustomers";
 import { axiosClient } from "../../../libraries/axiosClient";
 import { useUser } from "../../../hooks/useUser";
-
+// import { useNotification } from "../../../hooks/useNotification";
+import { useNotification } from "../../../hooks/useNotification";
 export default function Header() {
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openMenu, setOpenMenu] = useState(false);
@@ -29,8 +30,6 @@ export default function Header() {
   3;
   const [isMobile, setIsMobile] = useState(false);
   const [showPopupSearch, setShowPopupSearch] = useState(false);
-  const [custommer, setCustomer] = useState<ICustomer[]>([]);
-  const [notificationData, setNotificationData] = useState<any>(null);
   // zustand
   const { items } = useCarts((state) => state) as any;
   const { users } = useUser((state) => state) as any;
@@ -41,6 +40,14 @@ export default function Header() {
     const cartItem = item as { quantity: number };
     return total + cartItem.quantity;
   }, 0);
+  const quantityUserCart =
+    users?.user &&
+    users?.user?.customer_cart.reduce((total, item) => {
+      // cast biến item sang kiểu dữ liệu number
+      const cartItem = item as { quantity: number };
+      return total + cartItem.quantity;
+    }, 0);
+  const { unreadNotificationCount } = useNotification() as any;
   const handleMenu = () => {
     setOpenMenu(true);
   };
@@ -83,25 +90,21 @@ export default function Header() {
   }, [windowSize]);
 
   useEffect(() => {
-    axiosClient.get("/customers").then((response) => {
-      response.data.find((item) => {
-        if (item?._id === users.user?._id) {
-          setCustomer(item);
-        }
-      });
-    });
-  }, [users.user?._id]);
-  useEffect(() => {
     axiosClient.get("/notifications").then((response) => {
       // Lọc dữ liệu để chỉ giữ lại các thông báo của customerId
       const filteredNotifications = response.data.filter(
-        (notification) => notification.customer_id === customerId
+        (notification) =>
+          notification.customer_id === customerId &&
+          notification.isRead === false
       );
-
-      setNotificationData(filteredNotifications);
+      if (filteredNotifications) {
+        useNotification.setState({
+          unreadNotificationCount: filteredNotifications.length,
+        });
+      }
     });
   }, []);
-  const link = `/sse/customer-sse/${users.user?._id}`;
+  const link = `/user/notifications/order/${users.user?._id}`;
   return (
     <main className="relative w-full">
       <div className="mobile-header w-full fixed z-10 bg-white">
@@ -143,13 +146,21 @@ export default function Header() {
                   <span>
                     <RiShoppingCartLine size={20} />
                   </span>
-                  <span className="bg-primary_green w-5 h-5 rounded-full flex items-center justify-center ms-[6px]">
-                    <span className="text-[10px] leading-3 font-bold text-white">
-                      {users?.user && custommer?.customer_cart
-                        ? custommer?.customer_cart.length
-                        : quantityCart}
+                  {users?.user?.customer_cart &&
+                    users?.user?.customer_cart.length > 0 && (
+                      <span className="bg-primary_green w-5 h-5 rounded-full flex items-center justify-center ms-[6px]">
+                        <span className="text-[10px] leading-3 font-bold text-white">
+                          {quantityUserCart}
+                        </span>
+                      </span>
+                    )}
+                  {items && items.length > 0 && (
+                    <span className="bg-primary_green w-5 h-5 rounded-full flex items-center justify-center ms-[6px]">
+                      <span className="text-[10px] leading-3 font-bold text-white">
+                        {quantityCart}
+                      </span>
                     </span>
-                  </span>
+                  )}
                 </a>
               </div>
             ) : (
@@ -165,7 +176,7 @@ export default function Header() {
                 <a
                   onClick={() => {
                     if (access_token) {
-                      navigate("/history-order-user");
+                      navigate("/user-profile");
                       window.scrollTo(0, 0);
                     } else {
                       handleLogin();
@@ -196,9 +207,9 @@ export default function Header() {
                 >
                   <span className="relative flex item-center justify-center">
                     <RxBell size={24} />
-                    {notificationData?.length > 0 && (
+                    {unreadNotificationCount !== 0 && (
                       <span className="absolute top-[-5px] end-[-9px] bg-primary_green text-white text-[9px] w-[15px] h-[15px] leading-[15px] text-center font-normal rounded-full z-[1]">
-                        {notificationData?.length}
+                        {unreadNotificationCount}
                       </span>
                     )}
                   </span>
@@ -234,10 +245,10 @@ export default function Header() {
                   <span className="relative flex item-center justify-center">
                     <RiShoppingCartLine size={24} />
                     {users?.user &&
-                      custommer?.customer_cart &&
-                      custommer?.customer_cart.length > 0 && (
+                      users?.user?.customer_cart &&
+                      users?.user?.customer_cart.length > 0 && (
                         <span className="absolute top-[-5px] end-[-9px] bg-primary_green text-white text-[9px] w-[15px] h-[15px] leading-[15px] text-center font-normal rounded-full z-[1]">
-                          {custommer?.customer_cart.length}
+                          {quantityUserCart}
                         </span>
                       )}
                     {items && items.length > 0 && (

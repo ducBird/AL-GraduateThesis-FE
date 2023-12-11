@@ -4,6 +4,8 @@ import { useCarts } from "../../../hooks/useCart";
 import { IRemoveCartItem } from "../../../interfaces/IRemoveCartItem";
 import { IProduct } from "../../../interfaces/IProducts";
 import { axiosClient } from "../../../libraries/axiosClient";
+import { message } from "antd";
+import { useUser } from "../../../hooks/useUser";
 
 // Thiết lập các style cho modal
 const customStyles = {
@@ -27,7 +29,6 @@ interface IModalProps {
   showPopup: boolean;
   closePopup: () => void;
   customer: any;
-  items: any;
   productDelete: any;
   users: any;
 }
@@ -36,10 +37,12 @@ const PopupDeleteCart: React.FC<IModalProps> = ({
   closePopup,
   showPopup,
   customer,
-  items,
   productDelete,
   users,
 }) => {
+  const { removeCartItem } = useUser((state) => state) as any;
+  console.log("productDelete", productDelete);
+
   useEffect(() => {
     // Thêm hoặc xóa thanh scoll khi showModal thay đổi
     if (showPopup) {
@@ -50,7 +53,7 @@ const PopupDeleteCart: React.FC<IModalProps> = ({
   }, [showPopup]);
   const { remove } = useCarts((state) => state) as any;
 
-  const removeCartItem = () => {
+  const removeItemCart = () => {
     if (users?.user) {
       const customerId = users?.user?._id;
 
@@ -62,14 +65,19 @@ const PopupDeleteCart: React.FC<IModalProps> = ({
       if (cartItemToDelete) {
         // Gửi request xóa sản phẩm từ giỏ hàng
         axiosClient
-          .delete(`/customers/${customerId}/cart/${productDelete?._id}`)
+          .delete(
+            `/customers/${customerId}/cart/${productDelete?.product_id}/${productDelete?.variants_id}`
+          )
           .then(() => {
-            window.alert("Xóa sản phẩm ra khỏi giỏ hàng thành công");
-            window.location.reload();
+            message.success("Xóa sản phẩm ra khỏi giỏ hàng thành công");
+            removeCartItem(
+              productDelete?.product_id,
+              productDelete?.variants_id
+            );
             closePopup();
           })
           .catch((error) => {
-            console.error("Lỗi khi xóa sản phẩm khỏi giỏ hàng", error);
+            message.error("Lỗi khi xóa sản phẩm khỏi giỏ hàng");
           });
       } else {
         console.error("Không tìm thấy sản phẩm trong giỏ hàng");
@@ -80,7 +88,7 @@ const PopupDeleteCart: React.FC<IModalProps> = ({
         product: productDelete as IProduct,
       };
       remove(removeCart);
-      alert("Xóa sản phẩm ra khỏi giỏ hàng thành công");
+      message.success("Xóa sản phẩm ra khỏi giỏ hàng thành công");
       closePopup();
     }
   };
@@ -98,7 +106,7 @@ const PopupDeleteCart: React.FC<IModalProps> = ({
         <div className="flex items-center justify-center mt-16 gap-6">
           <button
             className="flex-1 border py-2 bg-red-500 text-white rounded-md text-lg"
-            onClick={removeCartItem}
+            onClick={removeItemCart}
           >
             Có
           </button>

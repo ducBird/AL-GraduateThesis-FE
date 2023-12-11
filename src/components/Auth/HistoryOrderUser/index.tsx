@@ -437,7 +437,7 @@ function HistoryOrderUser() {
                   className="bg-primary_green text-white"
                   onClick={() => {
                     // window.location.href = "/product-rewiews";
-                    navigate("/product-rewiews");
+                    navigate("/user-purchase");
                   }}
                 >
                   Đơn mua
@@ -471,9 +471,9 @@ function HistoryOrderUser() {
           </div>
         )}
       </div>
-      <div className="lg:mx-10 mx-5 my-4">
+      {/* <div className="lg:mx-10 mx-5 my-4">
         <h3 className="my-3 text-xl text-primary_green font-bold">Đơn Hàng</h3>
-        {/* <div className="w-full bg-gray-300 p-2 border rounded-md">
+        <div className="w-full bg-gray-300 p-2 border rounded-md">
           {historyOrderUser &&
             historyOrderUser.map((item, index) => {
               return (
@@ -486,8 +486,8 @@ function HistoryOrderUser() {
                 </div>
               );
             })}
-        </div> */}
-      </div>
+        </div>
+      </div> */}
     </div>
   );
 }

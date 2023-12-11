@@ -8,6 +8,7 @@ import { ICategory } from "../../../../interfaces/ICategory";
 import { axiosClient } from "../../../../libraries/axiosClient";
 import { Link, useNavigate } from "react-router-dom";
 import { IProduct } from "../../../../interfaces/IProducts";
+import { message } from "antd";
 interface Props {
   openMenu: boolean;
   isMobile: boolean;
@@ -39,7 +40,7 @@ const Navbar = (props: Props) => {
     if (searchValue.trim() !== "") {
       navigate(`/search-products?name=${formattedValue}`);
     } else {
-      alert("Vui lòng nhập vào ô tìm kiếm!");
+      message.error("Vui lòng nhập vào ô tìm kiếm!");
     }
   };
   const formattedValue = searchValue.replace(/\s+/g, "+");

@@ -10,7 +10,7 @@ const customStyles = {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   content: {
-    top: "57%",
+    top: "52%",
     left: "50%",
     right: "auto",
     bottom: "auto",
@@ -59,14 +59,16 @@ const PopupVariantOption: React.FC<IModalProps> = ({
         contentLabel="Example Modal"
       >
         <div className="my-4 w-full flex items-center justify-center">
-          <p className="text-3xl text-primary_green font-bold">Chọn biến thể</p>
+          <p className="text-3xl text-primary_green font-bold mt-10 lg:mt-0">
+            Chọn biến thể
+          </p>
         </div>
         <div className="text-sm">
           <ProductVariantOption product={product} />
         </div>
         <button
           onClick={closePopup}
-          className="absolute text-2xl top-2 right-2 text-red-500"
+          className="absolute text-3xl top-10 right-2 lg:top-2 text-red-500"
         >
           <MdOutlineClose />
         </button>

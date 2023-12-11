@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import numeral from "numeral";
 import Product from "../../Shop/Product";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import { message } from "antd";
 interface IModalProps {
   showPopup: boolean;
   closePopup: () => void;
@@ -32,7 +33,7 @@ const SearchPopup: React.FC<IModalProps> = ({ closePopup, showPopup }) => {
       navigate(`/search-products?name=${formattedValue}`);
       setSearchProducts([]);
     } else {
-      alert("Vui lòng nhập thông tin bạn cần tìm vào ô tìm kiếm");
+      message.error("Vui lòng nhập thông tin bạn cần tìm vào ô tìm kiếm");
     }
   };
   // hàm dùng để sử dụng phím enter để tìm kiếm

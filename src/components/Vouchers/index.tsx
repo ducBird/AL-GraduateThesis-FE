@@ -20,7 +20,7 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
     maxWidth: "700px",
     width: "100%",
-    height: "650px",
+    height: "625px",
     padding: "20px",
   },
 };
@@ -42,7 +42,6 @@ const Vouchers: React.FC<IModalProps> = ({
   // Ngày hiện tại
   const today = dayjs();
   const dateFormat = "YYYY-MM-DD";
-  console.log("today", today.format(dateFormat));
   const [selectedVoucher, setSelectedVoucher] = useState<IVouchers | null>(
     null
   );
@@ -94,7 +93,6 @@ const Vouchers: React.FC<IModalProps> = ({
           >
             {vouchers &&
               vouchers.map((voucher, index) => {
-                console.log(voucher.startDate);
                 return (
                   <div key={index}>
                     <div>

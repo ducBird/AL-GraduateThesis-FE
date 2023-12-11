@@ -13,6 +13,7 @@ import AquaticLogo from "../../assets/ImageAquaticLand.png";
 import { useUser } from "../../hooks/useUser";
 import { axiosClient } from "../../libraries/axiosClient";
 import { ICustomer } from "../../interfaces/ICustomers";
+import { message } from "antd";
 interface Props {
   openCart: boolean;
   setOpenCart: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,7 +27,7 @@ const Cart = (props: Props) => {
   };
   const [products, setProducts] = useState(true);
   const { items, remove } = useCarts((state) => state) as any;
-  const { users } = useUser((state) => state) as any;
+  const { users, removeCartItem } = useUser((state) => state) as any;
   const [openLogin, setOpenLogin] = useState(false);
   const [customer, setCustomer] = useState<ICustomer[]>([]);
   const handleLogin = () => {
@@ -34,9 +35,8 @@ const Cart = (props: Props) => {
   };
   // tính tổng giỏ hàng
   let totalOrder = 0;
-
-  if (customer.customer_cart && customer.customer_cart.length > 0) {
-    totalOrder = customer.customer_cart.reduce((total, item) => {
+  if (users?.user?.customer_cart && users?.user?.customer_cart.length > 0) {
+    totalOrder = users?.user?.customer_cart.reduce((total, item) => {
       const variantsPrice = item.variants?.price || item.product?.price || 0;
 
       const priceDiscount =
@@ -58,11 +58,11 @@ const Cart = (props: Props) => {
     }, 0);
   }
 
-  const groupedItems = [];
-  if (customer.customer_cart) {
-    customer.customer_cart.forEach((item) => {
+  const groupedItems: any = [];
+  if (users?.user?.customer_cart) {
+    users?.user?.customer_cart.forEach((item: any) => {
       const existingItem = groupedItems.find(
-        (groupedItem) =>
+        (groupedItem: any) =>
           groupedItem.product_id === item.product_id &&
           groupedItem.variants_id === item.variants_id
       );
@@ -115,8 +115,8 @@ const Cart = (props: Props) => {
             style={{ maxHeight: "calc(100vh - 100px)" }}
           >
             <div className="h-[65vh] border-b overflow-y-auto">
-              {users?.user && customer.customer_cart ? (
-                customer.customer_cart.length > 0 ? (
+              {users?.user && users?.user?.customer_cart ? (
+                users?.user?.customer_cart.length > 0 ? (
                   <ul className="h-full">
                     {groupedItems.length > 0 &&
                       groupedItems.map((item, index) => {
@@ -130,28 +130,30 @@ const Cart = (props: Props) => {
                               <div className="">
                                 <img
                                   className="w-[80px] h-[80px] object-contain"
-                                  src={item.product.product_image}
+                                  src={item.product?.product_image}
                                   alt=""
                                 />
                               </div>
                               <div className="max-w-[180px] md:max-w-[220px] leading-[25px] ml-5">
                                 <h2 className="font-medium leading-[20px]">
-                                  {item.product.name}
-                                  {" - "}
+                                  {item.product?.name}
                                   {item?.product?.variants &&
                                   item?.product?.variants.length > 0
-                                    ? item?.variants?.title
+                                    ? " - " + item?.variants?.title
                                     : ""}
                                 </h2>
                                 <p className="text-primary_green text-[13px]">
-                                  4 kho
+                                  {item?.product?.variants.length > 0
+                                    ? item?.variants?.stock
+                                    : item?.product?.stock}{" "}
+                                  trong kho
                                 </p>
                                 <span className="flex items-center">
-                                  {item.quantity}
+                                  {item?.quantity}
                                   <span className="mx-1">x</span>
                                   <span className="text-primary_green">
-                                    {item.product.variants &&
-                                    item.product.variants.length > 0
+                                    {item.product?.variants &&
+                                    item.product?.variants.length > 0
                                       ? `${numeral(priceDiscount)
                                           .format("0,0")
                                           .replace(/,/g, ".")} vnđ`
@@ -170,13 +172,18 @@ const Cart = (props: Props) => {
                                 onClick={() => {
                                   axiosClient
                                     .delete(
-                                      `/customers/${users?.user?._id}/cart/${item?.id}`
+                                      `/customers/${users?.user?._id}/cart/${item?.product_id}/${item?.variants_id}`
                                     )
                                     .then(() => {
-                                      window.alert(
+                                      removeCartItem(
+                                        item.product_id,
+                                        item.variants_id
+                                      );
+                                      message.success(
                                         "Xóa sản phẩm ra khỏi giỏ hàng thành công"
                                       );
-                                      window.location.reload();
+
+                                      // window.location.reload();
                                     });
                                 }}
                               >
@@ -240,14 +247,17 @@ const Cart = (props: Props) => {
                             <div className="max-w-[180px] md:max-w-[220px] leading-[25px] ml-5">
                               <h2 className="font-medium leading-[20px]">
                                 {item.product.name}
-                                {" - "}
+
                                 {item?.product?.variants &&
                                 item?.product?.variants.length > 0
-                                  ? item?.product?.variants[0]?.title
+                                  ? " - " + item?.product?.variants[0]?.title
                                   : ""}
                               </h2>
                               <p className="text-primary_green text-[13px]">
-                                4 kho
+                                {item?.product?.variants.length > 0
+                                  ? item?.product.variants[0]?.stock
+                                  : item?.product?.stock}{" "}
+                                trong kho
                               </p>
                               <span className="flex items-center">
                                 {item.quantity}
@@ -324,16 +334,18 @@ const Cart = (props: Props) => {
                   <button
                     onClick={() => {
                       if (!users.user) {
-                        alert("Vui lòng đăng nhập");
+                        message.error("Vui lòng đăng nhập");
                         handleLogin();
                       } else if (users.user) {
-                        if (customer.customer_cart.length === 0) {
-                          alert("Vui lòng chọn sản phẩm và thêm vào giỏ hàng");
+                        if (users?.user?.customer_cart.length === 0) {
+                          message.error(
+                            "Vui lòng chọn sản phẩm và thêm vào giỏ hàng"
+                          );
                         }
                       } else {
                         if (items.length === 0) {
-                          alert(
-                            "Vui lòng chọn sản phẩm và thêm vào giỏ hàng items"
+                          message.error(
+                            "Vui lòng chọn sản phẩm và thêm vào giỏ hàng"
                           );
                         }
                       }

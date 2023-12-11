@@ -69,7 +69,7 @@ function App() {
               path="/customers/reset/:verify_token"
               element={<ResetPassword />}
             />
-            <Route path="/history-order-user" element={<HistoryOrderUser />} />
+            <Route path="/user-profile" element={<HistoryOrderUser />} />
             <Route
               path="/customers/auth/change-password"
               element={<ChangePassword />}
@@ -83,24 +83,23 @@ function App() {
               element={<CheckOut />}
             />
             <Route path="/shop" element={<Shop />} />
-            <Route path="/shop/product/:id" element={<ProductDetail />} />
             <Route path="/product-category/:categoryId" element={<Shop />} />
             <Route
               path="/product-category/:categoryId/sub/:subCategoryId"
               element={<Shop />}
             />
-
             <Route path="/search-products" element={<Shop />} />
+            <Route path="/shop/product/:id" element={<ProductDetail />} />
             <Route path="/services" element={<Services />} />
             <Route path="/wishlist" element={<WishList />} />
-            <Route path="/product-rewiews" element={<ProductRewiews />} />
+            <Route path="/user-purchase" element={<ProductRewiews />} />
 
             <Route
               path="/customers/activate/:activation_token"
               element={<ActivationEmail />}
             />
             <Route
-              path="/sse/customer-sse/:customerId"
+              path="/user/notifications/order/:customerId"
               element={<Notification />}
             />
 

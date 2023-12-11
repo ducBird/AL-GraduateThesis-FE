@@ -45,14 +45,16 @@ const LoginCart = (props: Props) => {
         };
         // Gửi yêu cầu PATCH đến máy chủ để cập nhật thông tin giỏ hàng của khách hàng
         console.log("data", updateData);
-        axiosClient.patch(`/customers/${customerId}`, updateData);
+        axiosClient.patch(`/customers/${customerId}`, updateData).then(() => {
+          window.localStorage.removeItem("cart-storage");
+        });
 
         //chuyển hướng về trang chính (home)
         setTimeout(() => {
           // Code React thì hạn chế cho trình duyệt load lại bằng cách dùng window.location.href
           // window.location.href = "/";
           // mà hãy dùng useNavigation
-          navigate("/history-order-user");
+          // navigate("/user-profile");
           setOpenLogin(false);
           window.localStorage.removeItem("cart-storage");
         }, 1000);
