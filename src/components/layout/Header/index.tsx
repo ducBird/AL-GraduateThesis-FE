@@ -60,7 +60,7 @@ export default function Header() {
   // const userStorage = localStorage.getItem("user-storage") ?? "";
   // const parsedUser = userStorage ? JSON.parse(userStorage) : null;
   // const user = parsedUser && Object.keys(parsedUser.state.users).length !== 0;
-  const refresh_token = localStorage.getItem("refresh_token");
+  const access_token = localStorage.getItem("access_token");
   useEffect(() => {
     const handleSize = () => {
       setWindowSize({
@@ -164,7 +164,7 @@ export default function Header() {
                 </a>
                 <a
                   onClick={() => {
-                    if (refresh_token) {
+                    if (access_token) {
                       navigate("/history-order-user");
                       window.scrollTo(0, 0);
                     } else {
