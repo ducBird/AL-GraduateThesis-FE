@@ -109,12 +109,12 @@ const CheckOut = () => {
       // console.log("values", values);
       // Cập nhật trường points của khách hàng
       if (pointStatus === true) {
-        await axiosClient.patch(`/customers/${users.user._id}`, {
+        await axiosClient.patch(`/customers/${users?.user?._id}`, {
           points: newPoints - currentPoints,
         });
         updateUser({ points: newPoints - currentPoints });
       } else {
-        await axiosClient.patch(`/customers/${users.user._id}`, {
+        await axiosClient.patch(`/customers/${users?.user?._id}`, {
           points: newPoints,
         });
         updateUser({ points: newPoints });
@@ -230,12 +230,12 @@ const CheckOut = () => {
     try {
       // Cập nhật trường accumulated_money của khách hàng
       if (pointStatus === true) {
-        await axiosClient.patch(`/customers/${users.user._id}`, {
+        await axiosClient.patch(`/customers/${users?.user?._id}`, {
           points: newPoints - currentPoints,
         });
         updateUser({ points: newPoints - currentPoints });
       } else {
-        await axiosClient.patch(`/customers/${users.user._id}`, {
+        await axiosClient.patch(`/customers/${users?.user?._id}`, {
           points: newPoints,
         });
         updateUser({ points: newPoints });
@@ -419,12 +419,12 @@ const CheckOut = () => {
       try {
         // Cập nhật trường accumulated_money của khách hàng
         if (pointStatus === true) {
-          await axiosClient.patch(`/customers/${users.user._id}`, {
+          await axiosClient.patch(`/customers/${users?.user?._id}`, {
             points: newPoints - currentPoints,
           });
           updateUser({ points: newPoints - currentPoints });
         } else {
-          await axiosClient.patch(`/customers/${users.user._id}`, {
+          await axiosClient.patch(`/customers/${users?.user?._id}`, {
             points: newPoints,
           });
           updateUser({ points: newPoints });
@@ -504,12 +504,12 @@ const CheckOut = () => {
       try {
         // Cập nhật trường accumulated_money của khách hàng
         if (pointStatus === true) {
-          await axiosClient.patch(`/customers/${users.user._id}`, {
+          await axiosClient.patch(`/customers/${users?.user?._id}`, {
             points: newPoints - currentPoints,
           });
           updateUser({ points: newPoints - currentPoints });
         } else {
-          await axiosClient.patch(`/customers/${users.user._id}`, {
+          await axiosClient.patch(`/customers/${users?.user?._id}`, {
             points: newPoints,
           });
           updateUser({ points: newPoints });

@@ -171,7 +171,7 @@ function HistoryOrderUser() {
       )
       .then((response) => {
         message.success("Cập nhật thành công!");
-        updateUserProfile(response.data);
+        updateUserProfile();
       })
       .catch((err) => {
         message.error("Cập nhật thất bại!");
