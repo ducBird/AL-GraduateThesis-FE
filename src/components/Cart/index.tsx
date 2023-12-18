@@ -326,8 +326,9 @@ const Cart = (props: Props) => {
                 </Link>
                 <Link
                   to={
-                    customer.customer_cart && customer.customer_cart.length > 0
-                      ? customer.customer_cart.length === 0
+                    users?.user?.customer_cart &&
+                    users?.user?.customer_cart.length > 0
+                      ? users?.user?.customer_cart.length === 0
                         ? "/shop"
                         : "/component/checkcart/checkout"
                       : items.length === 0
