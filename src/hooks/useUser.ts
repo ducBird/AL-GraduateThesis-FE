@@ -76,10 +76,10 @@ export const useUser = create(
       // xóa customer_cart
       removeCartItem: (productId: string, variantId: string) => {
         set((state) => {
-          const updatedCustomerCart = state.users.user.customer_cart.filter(
+          const updatedCustomerCart = state?.users?.user?.customer_cart.filter(
             (item) =>
-              item.product_id.toString() !== productId ||
-              item.variants_id.toString() !== variantId
+              item?.product_id?.toString() !== productId ||
+              item?.variants_id?.toString() !== variantId
           );
           return {
             users: {

@@ -239,7 +239,7 @@ const ShoppingCart = () => {
     }
   }, [users?.user, users?.user?.customer_cart, items]);
   return (
-    <div className="lg:h-[685px]">
+    <div className="lg:h-auto">
       <div className="w-full bg-primary_green lg:h-[75px] lg:p-10 h-auto p-5 text-center">
         <h1 className="h-full w-full flex items-center justify-center text-2xl lg:text-4xl text-white font-bold">
           CHI TIẾT GIỎ HÀNG
@@ -276,10 +276,9 @@ const ShoppingCart = () => {
                               <Link to={`/shop/product/${product._id}`}>
                                 <p className="font-medium leading-[20px]">
                                   {product.name}
-                                  {" - "}
-                                  {product?.variants &&
-                                  product?.variants.length > 0
-                                    ? item?.variants?.title
+                                  {item?.product?.variants &&
+                                  item?.product?.variants.length > 0
+                                    ? ` - ${item?.variants?.title}`
                                     : ""}
                                 </p>
                               </Link>
@@ -352,7 +351,13 @@ const ShoppingCart = () => {
                               onClick={() => {
                                 axiosClient
                                   .delete(
-                                    `/customers/${users?.user?._id}/cart/${item?.product_id}/${item?.variants_id}`
+                                    `/customers/${users?.user?._id}/cart/${
+                                      item?.product_id
+                                    }${
+                                      item?.variants_id
+                                        ? `/${item?.variants_id}`
+                                        : ""
+                                    }`
                                   )
                                   .then(() => {
                                     removeCartItem(
@@ -391,8 +396,6 @@ const ShoppingCart = () => {
                     <tbody>
                       {groupedItems &&
                         groupedItems.map((item, index) => {
-                          console.log(item);
-
                           const priceDiscount =
                             (item.variants?.price *
                               (100 - item.product?.discount)) /
@@ -405,7 +408,13 @@ const ShoppingCart = () => {
                                   onClick={() => {
                                     axiosClient
                                       .delete(
-                                        `/customers/${users?.user?._id}/cart/${item?.product_id}/${item?.variants_id}`
+                                        `/customers/${users?.user?._id}/cart/${
+                                          item?.product_id
+                                        }${
+                                          item?.variants_id
+                                            ? `/${item?.variants_id}`
+                                            : ""
+                                        }`
                                       )
                                       .then(() => {
                                         removeCartItem(
@@ -438,10 +447,10 @@ const ShoppingCart = () => {
                                 <div className="w-[85%] md:text-[14px]">
                                   <h2 className="font-medium leading-[20px]">
                                     {item.product.name}
-                                    {" - "}
+
                                     {item?.product?.variants &&
                                     item?.product?.variants.length > 0
-                                      ? item?.variants?.title
+                                      ? ` - ${item?.variants?.title}`
                                       : ""}
                                   </h2>
                                 </div>
@@ -617,7 +626,6 @@ const ShoppingCart = () => {
               <ul className="block md:hidden">
                 {items &&
                   items.map((item, index) => {
-                    console.log(item);
                     const removeCart: IRemoveCartItem = {
                       product: item.product as IProduct,
                     };
@@ -643,7 +651,10 @@ const ShoppingCart = () => {
                           <div className="flex-1 md:max-w-[220px] leading-[33px] pl-3">
                             <Link to={`/shop/product/${product._id}`}>
                               <p className="font-medium leading-[20px]">
-                                {product.name} - {product?.variants[0]?.title}
+                                {product.name}
+                                {product?.variants[0] !== undefined
+                                  ? ` - ${product?.variants[0]?.title}`
+                                  : ""}
                               </p>
                             </Link>
 
@@ -768,8 +779,10 @@ const ShoppingCart = () => {
                             <td className="py-[15px] w-[200px] pl-4">
                               <div className="w-[85%] md:text-[14px]">
                                 <h2 className="font-medium leading-[20px]">
-                                  {item.product.name} -{" "}
-                                  {item?.product?.variants[0]?.title}
+                                  {item.product.name}
+                                  {item?.product?.variants[0] !== undefined
+                                    ? ` - ${item?.product?.variants[0]?.title}`
+                                    : ""}
                                 </h2>
                               </div>
                             </td>

@@ -172,7 +172,13 @@ const Cart = (props: Props) => {
                                 onClick={() => {
                                   axiosClient
                                     .delete(
-                                      `/customers/${users?.user?._id}/cart/${item?.product_id}/${item?.variants_id}`
+                                      `/customers/${users?.user?._id}/cart/${
+                                        item?.product_id
+                                      }${
+                                        item?.variants_id
+                                          ? `/${item?.variants_id}`
+                                          : ""
+                                      }`
                                     )
                                     .then(() => {
                                       removeCartItem(

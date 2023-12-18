@@ -41,7 +41,6 @@ const PopupDeleteCart: React.FC<IModalProps> = ({
   users,
 }) => {
   const { removeCartItem } = useUser((state) => state) as any;
-  console.log("productDelete", productDelete);
 
   useEffect(() => {
     // Thêm hoặc xóa thanh scoll khi showModal thay đổi

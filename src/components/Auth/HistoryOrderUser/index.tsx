@@ -366,7 +366,7 @@ function HistoryOrderUser() {
                     navigate("/user-purchase");
                   }}
                 >
-                  Đơn mua
+                  Đơn đã mua
                 </Button>
                 <Button
                   danger

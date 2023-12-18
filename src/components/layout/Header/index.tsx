@@ -14,8 +14,8 @@ import { useCarts } from "../../../hooks/useCart";
 import { useNavigate } from "react-router-dom";
 import { useProductWishlist } from "../../../hooks/useProductWishlist";
 import SearchPopup from "./Search/index";
-import { ICustomer } from "../../../interfaces/ICustomers";
-import { axiosClient } from "../../../libraries/axiosClient";
+// import { ICustomer } from "../../../interfaces/ICustomers";
+// import { axiosClient } from "../../../libraries/axiosClient";
 import { useUser } from "../../../hooks/useUser";
 // import { useNotification } from "../../../hooks/useNotification";
 import { useNotification } from "../../../hooks/useNotification";
@@ -33,7 +33,7 @@ export default function Header() {
   // zustand
   const { items } = useCarts((state) => state) as any;
   const { users } = useUser((state) => state) as any;
-  const customerId = users.user?._id;
+  // const customerId = users.user?._id;
   const { wishlist_items } = useProductWishlist((state) => state) as any;
   const quantityCart = items.reduce((total, item) => {
     // cast biến item sang kiểu dữ liệu number
@@ -89,22 +89,22 @@ export default function Header() {
     // console.log(windowSize);
   }, [windowSize]);
 
-  useEffect(() => {
-    axiosClient.get("/notifications").then((response) => {
-      // Lọc dữ liệu để chỉ giữ lại các thông báo của customerId
-      const filteredNotifications = response.data.filter(
-        (notification) =>
-          notification.customer_id === customerId &&
-          notification.isRead === false
-      );
-      if (filteredNotifications) {
-        useNotification.setState({
-          unreadNotificationCount: filteredNotifications.length,
-        });
-      }
-    });
-  }, []);
-  const link = `/user/notifications/order/${users.user?._id}`;
+  // useEffect(() => {
+  //   axiosClient.get("/notifications").then((response) => {
+  //     // Lọc dữ liệu để chỉ giữ lại các thông báo của customerId
+  //     const filteredNotifications = response.data.filter(
+  //       (notification) =>
+  //         notification.customer_id === customerId &&
+  //         notification.isRead === false
+  //     );
+  //     if (filteredNotifications) {
+  //       useNotification.setState({
+  //         unreadNotificationCount: filteredNotifications.length,
+  //       });
+  //     }
+  //   });
+  // }, []);
+  // const link = `/user/notifications/order/${users.user?._id}`;
   return (
     <main className="relative w-full">
       <div className="mobile-header w-full fixed z-10 bg-white">
@@ -198,7 +198,7 @@ export default function Header() {
                     )}
                   </span>
                 </a>
-                <a
+                {/* <a
                   onClick={() => {
                     navigate(link);
                     window.scrollTo(0, 0);
@@ -213,7 +213,7 @@ export default function Header() {
                       </span>
                     )}
                   </span>
-                </a>
+                </a> */}
                 <a
                   onClick={() => {
                     navigate("/wishlist");
