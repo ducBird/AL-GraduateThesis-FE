@@ -53,7 +53,7 @@ const Register = () => {
   };
   return (
     <>
-      <div className="bg-primary_green text-[#ffff] text-center py-4 ">
+      <div className="bg-primary_green text-[#ffff] text-center py-1 ">
         <h1 className="font-medium text-[30px]">TÀI KHOẢN</h1>
       </div>
       <div className="container px-3">
@@ -61,7 +61,7 @@ const Register = () => {
           <div className="md:col-span-6 md:p-4">
             {isLogin ? (
               <div>
-                <h1 className="md:mt-[50px] my-5 font-semibold text-[20px]">
+                <h1 className="md:mt-[1px] my-5 font-semibold text-[20px]">
                   Đăng ký tài khoản
                 </h1>
                 <Form
@@ -156,7 +156,7 @@ const Register = () => {
                     <Input.Password className="outline-none border border-gray-400 h-[40px]" />
                   </Form.Item>
 
-                  <Form.Item className="mt-[45px]">
+                  <Form.Item className="mt-[1px]">
                     <button
                       className="border w-[100%] rounded-[20px] py-2 bg-primary_green text-[20px] text-white font-semibold hover:opacity-[0.7]"
                       type="submit"

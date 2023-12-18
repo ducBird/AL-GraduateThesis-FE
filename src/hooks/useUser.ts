@@ -30,9 +30,12 @@ export const useUser = create(
           type: "updateUserAvatar",
         });
       },
-      updateUserProfile: (customer: ICustomer) => {
-        const users = get().users;
-        Object.assign(users.user, customer);
+      updateUserProfile: async () => {
+        // Gửi request đến endpoint để lấy thông tin chi tiết của cart
+        const users = { ...get().users };
+        const customerId = users.user._id;
+        const response = await axiosClient.get(`customers/${customerId}`);
+        Object.assign(users.user, response.data);
         return set(() => ({ users: users }), false, {
           type: "updateProfileUser",
         });

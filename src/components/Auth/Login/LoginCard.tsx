@@ -25,39 +25,46 @@ const LoginCart = (props: Props) => {
     axiosClient
       .post("/customers/login", values)
       .then((response) => {
-        addUser(response.data);
-        window.localStorage.setItem(
-          "refresh_token",
-          response.data.refresh_token
-        );
-        window.localStorage.setItem("access_token", response.data.access_token);
-        message.success(response.data.msg);
-        const customerId = response?.data?.user?._id; // Lấy id của khách hàng đã đăng nhập
-        // Chuẩn bị dữ liệu cần patch (thêm sản phẩm vào customer_cart)
-        const updateData = {
-          $push: {
-            customer_cart: items.map((item: any) => ({
-              product_id: item.product?._id,
-              variants_id: item.product?.variants[0]?._id,
-              quantity: parseInt(item.quantity, 10),
-            })),
-          },
-        };
-        // Gửi yêu cầu PATCH đến máy chủ để cập nhật thông tin giỏ hàng của khách hàng
-        console.log("data", updateData);
-        axiosClient.patch(`/customers/${customerId}`, updateData).then(() => {
-          window.localStorage.removeItem("cart-storage");
-        });
+        if (!response.data.user.active) {
+          message.error("Tài khoản đã bị khóa!");
+        } else {
+          addUser(response.data);
+          window.localStorage.setItem(
+            "refresh_token",
+            response.data.refresh_token
+          );
+          window.localStorage.setItem(
+            "access_token",
+            response.data.access_token
+          );
+          message.success(response.data.msg);
+          const customerId = response?.data?.user?._id; // Lấy id của khách hàng đã đăng nhập
+          // Chuẩn bị dữ liệu cần patch (thêm sản phẩm vào customer_cart)
+          const updateData = {
+            $push: {
+              customer_cart: items.map((item: any) => ({
+                product_id: item.product?._id,
+                variants_id: item.product?.variants[0]?._id,
+                quantity: parseInt(item.quantity, 10),
+              })),
+            },
+          };
+          // Gửi yêu cầu PATCH đến máy chủ để cập nhật thông tin giỏ hàng của khách hàng
+          console.log("data", updateData);
+          axiosClient.patch(`/customers/${customerId}`, updateData).then(() => {
+            window.localStorage.removeItem("cart-storage");
+          });
 
-        //chuyển hướng về trang chính (home)
-        setTimeout(() => {
-          // Code React thì hạn chế cho trình duyệt load lại bằng cách dùng window.location.href
-          // window.location.href = "/";
-          // mà hãy dùng useNavigation
-          // navigate("/user-profile");
-          setOpenLogin(false);
-          window.localStorage.removeItem("cart-storage");
-        }, 1000);
+          //chuyển hướng về trang chính (home)
+          setTimeout(() => {
+            // Code React thì hạn chế cho trình duyệt load lại bằng cách dùng window.location.href
+            // window.location.href = "/";
+            // mà hãy dùng useNavigation
+            navigate("/user-profile");
+            setOpenLogin(false);
+            window.localStorage.removeItem("cart-storage");
+          }, 1000);
+        }
       })
       .catch((err) => {
         message.error(err.response?.data.msg);

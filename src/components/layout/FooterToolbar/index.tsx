@@ -11,7 +11,7 @@ const FooterTool = () => {
     setOpenLogin(true);
   };
   const navigate = useNavigate();
-  const refresh_token = localStorage.getItem("refresh_token");
+  const access_token = localStorage.getItem("access_token");
   return (
     <>
       <div className="container">
@@ -46,8 +46,8 @@ const FooterTool = () => {
 
               <div
                 onClick={() => {
-                  if (refresh_token) {
-                    navigate("/history-order-user");
+                  if (access_token) {
+                    navigate("/user-profile");
                     window.scrollTo(0, 0);
                   } else {
                     handleLogin();

@@ -15,7 +15,7 @@ function HistoryOrderUser() {
   // const userString = localStorage.getItem("user-storage");
   // const user = userString ? JSON.parse(userString) : null;
   const navigate = useNavigate();
-  const { users, updateUserAvatar, updateUserProfile } = useUser(
+  const { users, addUser, updateUserAvatar, updateUserProfile } = useUser(
     (state) => state
   );
   const [historyOrderUser, setHistoryOrderUser] = useState<Array<IOrders>>([]);
@@ -38,6 +38,36 @@ function HistoryOrderUser() {
       });
     }
   }, [users.user?._id]);
+
+  useEffect(() => {
+    const getUser = async () => {
+      await axios
+        .get("http://localhost:9000/customers/login/success", {
+          withCredentials: true,
+        })
+        .then((resObject) => {
+          // console.log(resObject.data);
+          // console.log(resObject.data.cookie.session_google_account);
+          window.localStorage.setItem(
+            "cookie-google",
+            resObject.data.cookie.session_google_account
+          );
+          window.localStorage.setItem(
+            "access_token",
+            resObject.data.access_token
+          );
+          addUser(resObject.data);
+        })
+        .catch((error) => {
+          navigate("/");
+          message.error(error.response.data.msg);
+          // console.log(error);
+        });
+    };
+    if (!users?.user) {
+      getUser();
+    }
+  }, []);
 
   // console.log("historyOrderUser", historyOrderUser);
 
@@ -141,7 +171,7 @@ function HistoryOrderUser() {
       )
       .then((response) => {
         message.success("Cập nhật thành công!");
-        updateUserProfile(response.data);
+        updateUserProfile();
       })
       .catch((err) => {
         message.error("Cập nhật thất bại!");
@@ -217,17 +247,37 @@ function HistoryOrderUser() {
                   />
                 </div>
               </Upload>
-              <Form.Item hasFeedback label="Họ - Tên đệm" name="first_name">
+              <Form.Item
+                hasFeedback
+                label="Họ - Tên đệm"
+                name="first_name"
+                rules={[{ required: true, message: "Không được để trống!" }]}
+              >
                 <Input />
               </Form.Item>
-              <Form.Item hasFeedback label="Tên" name="last_name">
+              <Form.Item
+                hasFeedback
+                label="Tên"
+                name="last_name"
+                rules={[{ required: true, message: "Không được để trống!" }]}
+              >
                 <Input />
               </Form.Item>
-              <Form.Item hasFeedback label="Email" name="email">
+              <Form.Item
+                hasFeedback
+                label="Email"
+                name="email"
+                rules={[{ required: true, message: "Không được để trống!" }]}
+              >
                 <Input disabled />
               </Form.Item>
               {/* SĐT */}
-              <Form.Item hasFeedback label="Phone" name="phone_number">
+              <Form.Item
+                hasFeedback
+                label="SĐT"
+                name="phone_number"
+                rules={[{ required: true, message: "Không được để trống!" }]}
+              >
                 <Input />
               </Form.Item>
 
@@ -252,6 +302,12 @@ function HistoryOrderUser() {
                 hidden={hiddenAddress}
                 label="Tỉnh/Thành Phố"
                 name="provinces"
+                rules={[
+                  {
+                    required: hiddenAddress ? false : true,
+                    message: "Không được để trống!",
+                  },
+                ]}
               >
                 <Select
                   showSearch
@@ -276,6 +332,12 @@ function HistoryOrderUser() {
                 hidden={hiddenAddress}
                 label="Quận/Huyện/Thị Xã"
                 name="districts"
+                rules={[
+                  {
+                    required: hiddenAddress ? false : true,
+                    message: "Không được để trống!",
+                  },
+                ]}
               >
                 <Select
                   showSearch
@@ -300,6 +362,12 @@ function HistoryOrderUser() {
                 hidden={hiddenAddress}
                 label="Xã/Thị Trấn"
                 name="wards"
+                rules={[
+                  {
+                    required: hiddenAddress ? false : true,
+                    message: "Không được để trống!",
+                  },
+                ]}
               >
                 <Select
                   showSearch
@@ -325,6 +393,12 @@ function HistoryOrderUser() {
                 hasFeedback
                 label="Địa chỉ cụ thể"
                 name="detail_address"
+                rules={[
+                  {
+                    required: hiddenAddress ? false : true,
+                    message: "Không được để trống!",
+                  },
+                ]}
               >
                 <Input />
               </Form.Item>
@@ -372,8 +446,22 @@ function HistoryOrderUser() {
                   danger
                   type="primary"
                   onClick={() => {
+                    //không hiểu sao không thể dùng cách call api để logout mà xóa đi cookie google
+                    // axiosClient
+                    //   .get("/customers/logout", { withCredentials: true })
+                    //   .then((response) => {
+                    //     console.log("res", response);
+                    //     localStorage.clear();
+                    //     // window.location.href = "/";
+                    //   })
+                    //   .catch((err) => {
+                    //     console.log(err);
+                    //   });
                     localStorage.clear();
-                    window.location.href = "/";
+                    window.open(
+                      "http://localhost:9000/customers/logout",
+                      "_self"
+                    );
                   }}
                 >
                   Đăng xuất
