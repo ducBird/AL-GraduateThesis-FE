@@ -15,9 +15,8 @@ function HistoryOrderUser() {
   // const userString = localStorage.getItem("user-storage");
   // const user = userString ? JSON.parse(userString) : null;
   const navigate = useNavigate();
-  const { users, addUser, updateUserAvatar, updateUserProfile } = useUser(
-    (state) => state
-  );
+  const { users, addUser, updateUserAvatar, updateUserProfile, removeUser } =
+    useUser((state) => state);
   const [historyOrderUser, setHistoryOrderUser] = useState<Array<IOrders>>([]);
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -452,7 +451,8 @@ function HistoryOrderUser() {
                     //   .then((response) => {
                     //     console.log("res", response);
                     //     localStorage.clear();
-                    //     // window.location.href = "/";
+                    //     removeUser();
+                    //     window.location.href = "/";
                     //   })
                     //   .catch((err) => {
                     //     console.log(err);

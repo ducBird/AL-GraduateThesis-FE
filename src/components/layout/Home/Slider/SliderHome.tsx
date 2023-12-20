@@ -52,7 +52,7 @@ function SliderHome(props: IProductProps) {
                       className="mt-7 rounded-full bg-primary_green shadow-md"
                     >
                       <p className="py-2 px-4 text-white hover:font-bold">
-                        SHOP NOW
+                        XEM SẢN PHẨM
                       </p>
                     </motion.button>
                   </Link>

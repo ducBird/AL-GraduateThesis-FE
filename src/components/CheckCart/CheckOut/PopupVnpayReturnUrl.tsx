@@ -156,14 +156,6 @@ const PopupVnpayReturnUrl: React.FC<IModalProps> = ({
         <div className="mt-10 text-2xl flex items-center justify-center text-blue-500 font-bold">
           <p>{countdown}</p>
         </div>
-        <div className="mt-10 flex items-center justify-center">
-          <button
-            className="border px-4 py-2 text-xl bg-primary_green rounded-lg text-white font-bold"
-            onClick={() => navigate("/shop")}
-          >
-            Trở về
-          </button>
-        </div>
       </ReactModal>
     </div>
   );
