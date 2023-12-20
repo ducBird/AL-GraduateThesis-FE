@@ -342,7 +342,7 @@ const CheckOut = () => {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         amount: total,
-        bankCode: "NCB",
+        // bankCode: "NCB",
         orderDescription: "Thanh toan don hang",
         orderType: "other",
         language: "vn",
@@ -447,13 +447,13 @@ const CheckOut = () => {
         message.error("Đặt hàng với thanh toán vnpay thất bại");
       }
     } else {
-      alert("Thanh toán thất bại, hủy thanh toán !!!");
+      message.error("Hủy thanh toán !!!");
       setTimeout(() => {
         window.location.replace("/shop");
         window.localStorage.removeItem("totalForVnpay");
         window.localStorage.removeItem("customerdata");
         window.localStorage.removeItem("formValues");
-      }, 2000);
+      }, 1000);
     }
   };
   useEffect(() => {

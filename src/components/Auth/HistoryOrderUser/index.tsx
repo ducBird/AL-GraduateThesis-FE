@@ -15,9 +15,8 @@ function HistoryOrderUser() {
   // const userString = localStorage.getItem("user-storage");
   // const user = userString ? JSON.parse(userString) : null;
   const navigate = useNavigate();
-  const { users, addUser, updateUserAvatar, updateUserProfile } = useUser(
-    (state) => state
-  );
+  const { users, addUser, updateUserAvatar, updateUserProfile, removeUser } =
+    useUser((state) => state);
   const [historyOrderUser, setHistoryOrderUser] = useState<Array<IOrders>>([]);
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -447,21 +446,22 @@ function HistoryOrderUser() {
                   type="primary"
                   onClick={() => {
                     //không hiểu sao không thể dùng cách call api để logout mà xóa đi cookie google
-                    // axiosClient
-                    //   .get("/customers/logout", { withCredentials: true })
-                    //   .then((response) => {
-                    //     console.log("res", response);
-                    //     localStorage.clear();
-                    //     // window.location.href = "/";
-                    //   })
-                    //   .catch((err) => {
-                    //     console.log(err);
-                    //   });
-                    localStorage.clear();
-                    window.open(
-                      "http://localhost:9000/customers/logout",
-                      "_self"
-                    );
+                    axiosClient
+                      .get("/customers/logout", { withCredentials: true })
+                      .then((response) => {
+                        console.log("res", response);
+                        localStorage.clear();
+                        removeUser();
+                        // window.location.href = "/";
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
+                    // localStorage.clear();
+                    // window.open(
+                    //   "http://localhost:9000/customers/logout",
+                    //   "_self"
+                    // );
                   }}
                 >
                   Đăng xuất

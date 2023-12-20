@@ -38,6 +38,7 @@ const LoginCart = (props: Props) => {
             response.data.access_token
           );
           message.success(response.data.msg);
+          window.scrollTo(0, 0);
           const customerId = response?.data?.user?._id; // Lấy id của khách hàng đã đăng nhập
           // Chuẩn bị dữ liệu cần patch (thêm sản phẩm vào customer_cart)
           const updateData = {

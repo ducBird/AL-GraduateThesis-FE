@@ -23,6 +23,15 @@ export const useUser = create(
           type: "addUser",
         });
       },
+      removeUser: () => {
+        return set(
+          () => ({ access_token: null, refresh_token: null, users: {} }),
+          false,
+          {
+            type: "removeUser",
+          }
+        );
+      },
       updateUserAvatar: (url: string) => {
         const users = get().users;
         users.user.avatar = url;
@@ -141,6 +150,7 @@ export const useUser = create(
             });
         }
       },
+
       refreshToken: async () => {
         const refresh_token = localStorage.getItem("refresh_token");
         if (refresh_token) {
