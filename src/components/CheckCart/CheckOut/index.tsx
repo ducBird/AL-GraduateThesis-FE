@@ -516,6 +516,10 @@ const CheckOut = () => {
         }
         await axiosClient.post("/orders", orderData);
         alert("Đặt hàng với thanh toán momo thành công");
+        removeAllUserCart();
+        axiosClient.delete(
+          `/customers/delete-customer-cart/${users?.user?._id}`
+        );
         // Sau một khoảng thời gian, chuyển hướng đến "/shop"
         setTimeout(() => {
           window.location.replace("/shop");
