@@ -446,22 +446,22 @@ function HistoryOrderUser() {
                   type="primary"
                   onClick={() => {
                     //không hiểu sao không thể dùng cách call api để logout mà xóa đi cookie google
-                    axiosClient
-                      .get("/customers/logout", { withCredentials: true })
-                      .then((response) => {
-                        console.log("res", response);
-                        localStorage.clear();
-                        removeUser();
-                        // window.location.href = "/";
-                      })
-                      .catch((err) => {
-                        console.log(err);
-                      });
-                    // localStorage.clear();
-                    // window.open(
-                    //   "http://localhost:9000/customers/logout",
-                    //   "_self"
-                    // );
+                    // axiosClient
+                    //   .get("/customers/logout", { withCredentials: true })
+                    //   .then((response) => {
+                    //     console.log("res", response);
+                    //     localStorage.clear();
+                    //     removeUser();
+                    //     window.location.href = "/";
+                    //   })
+                    //   .catch((err) => {
+                    //     console.log(err);
+                    //   });
+                    localStorage.clear();
+                    window.open(
+                      "http://localhost:9000/customers/logout",
+                      "_self"
+                    );
                   }}
                 >
                   Đăng xuất
