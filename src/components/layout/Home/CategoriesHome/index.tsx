@@ -47,10 +47,12 @@ function CategoriesHome(props: IProps) {
                   flex items-center justify-center`}
                 >
                   <img
-                    src={imageCategory}
+                    src={category.image_url}
                     alt="image"
                     className={`${
-                      filter === categoryId ? "text-black" : "text-white"
+                      filter === categoryId
+                        ? "text-black rounded-full w-10 h-10"
+                        : "text-white rounded-full w-10 h-10"
                     } group-hover:text-black text-lg`}
                   />
                 </div>
